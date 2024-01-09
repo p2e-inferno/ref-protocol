@@ -99,16 +99,20 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   await diamondInit.deployed();
   console.log("DiamondInit deployed:", diamondInit.address);
 
-  // Deploy facets and set the `facetCuts` variable
-  console.log("");
-  console.log("Deploying facets");
+  // set the `facetCuts` variable
+
   const FacetNames = ["DiamondCutFacet", "DiamondLoupeFacet", "OwnershipFacet"];
   // The `facetCuts` variable is the FacetCut[] that contains the functions to add during diamond deployment
   const facetCuts = [];
   for (const FacetName of FacetNames) {
-    const Facet = await hre.ethers.getContractFactory(FacetName);
-    const facet = await Facet.deploy();
-    await facet.deployed();
+    // const Facet = await hre.ethers.getContractFactory(FacetName);
+    await deploy(FacetName, {
+      from: deployer,
+      args: [],
+      log: true,
+      autoMine: true,
+    });
+    const facet = await hre.ethers.getContract(FacetName, deployer);
     console.log(`${FacetName} deployed: ${facet.address}`);
     facetCuts.push({
       facetAddress: facet.address,
