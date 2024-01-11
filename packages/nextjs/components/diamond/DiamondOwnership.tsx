@@ -4,15 +4,15 @@ import { WriteOnlyFunctionForm } from "../scaffold-eth/Contract/WriteOnlyFunctio
 import { Abi } from "abitype";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useDiamondOwnership } from "~~/hooks/scaffold-eth/useDiamondOwnership";
-import { useFacetsFunctionsToDisplay } from "~~/hooks/scaffold-eth/useFacetsFunctionsToDisplay";
+import { useFacetFunctionsToDisplay } from "~~/hooks/scaffold-eth/useFacetFunctionsToDisplay";
 
 export const DiamondOwnership = ({ onChange }: { onChange: () => void }) => {
   const { data: diamondContractData } = useDeployedContractInfo("Diamond");
-  const { writableFunctionsToDisplay, readableFunctionsToDisplay } = useFacetsFunctionsToDisplay("OwnershipFacet");
+  const { writableFunctionsToDisplay, readableFunctionsToDisplay } = useFacetFunctionsToDisplay("OwnershipFacet");
   const diamondOwnership = useDiamondOwnership();
 
-  if (writableFunctionsToDisplay && !writableFunctionsToDisplay.length) {
-    return <>No write methods</>;
+  if (!writableFunctionsToDisplay.length && !readableFunctionsToDisplay.length) {
+    return <>No contract methods found</>;
   }
 
   return (

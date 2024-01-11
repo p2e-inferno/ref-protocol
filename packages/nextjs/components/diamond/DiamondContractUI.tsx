@@ -1,4 +1,5 @@
 import { DiamondCut } from "./DiamondCut";
+import { DiamondFacets } from "./DiamondFacets";
 import { DiamondLoupe } from "./DiamondLoupe";
 import { DiamondOwnership } from "./DiamondOwnership";
 import { Spinner } from "~~/components/assets/Spinner";
@@ -59,51 +60,53 @@ export const DiamondContractUI = ({ contractName, className = "" }: DiamondContr
               </p>
             )}
           </div>
-          {/* <div className="bg-base-300 rounded-3xl px-6 lg:px-8 py-4 shadow-lg shadow-base-300">
-            <ContractVariables
-              refreshDisplayVariables={refreshDisplayVariables}
-              deployedContractData={deployedContractData}
-            />
-          </div> */}
         </div>
-        <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
-          <div className="z-10">
-            <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
-              <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
-                <div className="flex items-center justify-center space-x-2">
-                  <p className="my-0 text-xs">Loupe Facet</p>
+        {contractName === "Diamond" || contractName.includes("DiamondContract") ? (
+          <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
+            <div className="z-10">
+              <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
+                <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
+                  <div className="flex items-center justify-center space-x-2">
+                    <p className="my-0 text-xs">Loupe Facet</p>
+                  </div>
+                </div>
+                <div className="p-5 divide-y divide-base-300">
+                  <DiamondLoupe />
                 </div>
               </div>
-              <div className="p-5 divide-y divide-base-300">
-                <DiamondLoupe />
+            </div>
+            <div className="z-10">
+              <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
+                <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
+                  <div className="flex items-center justify-center space-x-2">
+                    <p className="my-0 text-sm">Cut Facet</p>
+                  </div>
+                </div>
+                <div className="p-5 divide-y divide-base-300">
+                  <DiamondCut onChange={() => console.log("ONCHANGE!!!")} />
+                </div>
+              </div>
+            </div>
+            <div className="z-10">
+              <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
+                <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
+                  <div className="flex items-center justify-center space-x-2">
+                    <p className="my-0 text-sm">Ownership</p>
+                  </div>
+                </div>
+                <div className="p-5 divide-y divide-base-300">
+                  <DiamondOwnership onChange={() => console.log("DIAMOND OWNER")} />
+                </div>
               </div>
             </div>
           </div>
-          <div className="z-10">
-            <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
-              <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
-                <div className="flex items-center justify-center space-x-2">
-                  <p className="my-0 text-sm">Cut Facet</p>
-                </div>
-              </div>
-              <div className="p-5 divide-y divide-base-300">
-                <DiamondCut onChange={() => console.log("ONCHANGE!!!")} />
-              </div>
-            </div>
-          </div>
-          <div className="z-10">
-            <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
-              <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
-                <div className="flex items-center justify-center space-x-2">
-                  <p className="my-0 text-sm">Ownership</p>
-                </div>
-              </div>
-              <div className="p-5 divide-y divide-base-300">
-                <DiamondOwnership onChange={() => console.log("DIAMOND OWNER")} />
-              </div>
-            </div>
-          </div>
-        </div>
+        ) : contractName.includes("Facet") ? (
+          <DiamondFacets contractName={contractName} />
+        ) : (
+          <p>
+            {`No contract Diamond Contract or Facet found by the name of "${contractName}" on chain "${targetNetwork.name}"!`}
+          </p>
+        )}
       </div>
     </div>
   );

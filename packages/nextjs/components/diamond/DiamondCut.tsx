@@ -3,11 +3,11 @@ import { WriteOnlyFunctionForm } from "../scaffold-eth/Contract/WriteOnlyFunctio
 import { Abi } from "abitype";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { useDiamondCut } from "~~/hooks/scaffold-eth/useDiamondCut";
-import { useFacetsFunctionsToDisplay } from "~~/hooks/scaffold-eth/useFacetsFunctionsToDisplay";
+import { useFacetFunctionsToDisplay } from "~~/hooks/scaffold-eth/useFacetFunctionsToDisplay";
 
 export const DiamondCut = ({ onChange }: { onChange: () => void }) => {
   const { data: diamondContractData } = useDeployedContractInfo("Diamond");
-  const { writableFunctionsToDisplay } = useFacetsFunctionsToDisplay("DiamondCutFacet");
+  const { writableFunctionsToDisplay } = useFacetFunctionsToDisplay("DiamondCutFacet");
   // const [refreshDisplayVariables, triggerRefreshDisplayVariables] = useReducer(value => !value, false);
   const diamondCut = useDiamondCut();
 
