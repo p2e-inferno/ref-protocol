@@ -26,7 +26,7 @@ struct DiamondArgs {
     bytes initCalldata;
 }
 
-contract Diamond {    
+contract YourDiamondContract {    
 
     constructor(IDiamondCut.FacetCut[] memory _diamondCut, DiamondArgs memory _args) payable {
         LibDiamond.setContractOwner(_args.owner);
