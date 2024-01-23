@@ -8,7 +8,7 @@ import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
  */
 export function useDiamondCut() {
   const { targetNetwork } = useTargetNetwork();
-  const { data: diamondContractData } = useDeployedContractInfo("Diamond");
+  const { data: diamondContractData } = useDeployedContractInfo("YourDiamondContract");
   const { data: diamondCutData } = useDeployedContractInfo("DiamondCutFacet");
   const publicClient = usePublicClient({ chainId: targetNetwork.id });
 

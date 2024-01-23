@@ -17,7 +17,7 @@ type DiamondContractUIProps = {
 export const DiamondFacets = ({ contractName }: DiamondContractUIProps) => {
   const { targetNetwork } = useTargetNetwork();
   const { data: deployedFacetData, isLoading: deployedContractLoading } = useDeployedContractInfo(contractName);
-  const { data: diamondContractData } = useDeployedContractInfo("Diamond");
+  const { data: diamondContractData } = useDeployedContractInfo("YourDiamondContract");
 
   const { readableFunctionsToDisplay, writableFunctionsToDisplay } = useFacetFunctionsToDisplay(contractName);
 

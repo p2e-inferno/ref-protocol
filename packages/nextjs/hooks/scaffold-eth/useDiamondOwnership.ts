@@ -9,7 +9,7 @@ import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
  */
 export function useDiamondOwnership() {
   const { targetNetwork } = useTargetNetwork();
-  const { data: diamondContractData } = useDeployedContractInfo("Diamond");
+  const { data: diamondContractData } = useDeployedContractInfo("YourDiamondContract");
   const { data: diamondOwnershipData } = useDeployedContractInfo("OwnershipFacet");
   const publicClient = usePublicClient({ chainId: targetNetwork.id });
   const [diamondOwner, setDiamondOwner] = useState<any>();

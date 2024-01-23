@@ -61,7 +61,7 @@ export const DiamondContractUI = ({ contractName, className = "" }: DiamondContr
             )}
           </div>
         </div>
-        {contractName === "Diamond" || contractName.includes("DiamondContract") ? (
+        {contractName === "YourDiamondContract" || contractName.includes("DiamondContract") ? (
           <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
             <div className="z-10">
               <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">

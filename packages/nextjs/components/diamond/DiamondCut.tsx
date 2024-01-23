@@ -6,7 +6,7 @@ import { useDiamondCut } from "~~/hooks/scaffold-eth/useDiamondCut";
 import { useFacetFunctionsToDisplay } from "~~/hooks/scaffold-eth/useFacetFunctionsToDisplay";
 
 export const DiamondCut = ({ onChange }: { onChange: () => void }) => {
-  const { data: diamondContractData } = useDeployedContractInfo("Diamond");
+  const { data: diamondContractData } = useDeployedContractInfo("YourDiamondContract");
   const { writableFunctionsToDisplay } = useFacetFunctionsToDisplay("DiamondCutFacet");
   // const [refreshDisplayVariables, triggerRefreshDisplayVariables] = useReducer(value => !value, false);
   const diamondCut = useDiamondCut();

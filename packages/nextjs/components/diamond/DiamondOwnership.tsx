@@ -7,7 +7,7 @@ import { useDiamondOwnership } from "~~/hooks/scaffold-eth/useDiamondOwnership";
 import { useFacetFunctionsToDisplay } from "~~/hooks/scaffold-eth/useFacetFunctionsToDisplay";
 
 export const DiamondOwnership = ({ onChange }: { onChange: () => void }) => {
-  const { data: diamondContractData } = useDeployedContractInfo("Diamond");
+  const { data: diamondContractData } = useDeployedContractInfo("YourDiamondContract");
   const { writableFunctionsToDisplay, readableFunctionsToDisplay } = useFacetFunctionsToDisplay("OwnershipFacet");
   const diamondOwnership = useDiamondOwnership();
 

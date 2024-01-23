@@ -4,7 +4,7 @@ import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 import { ContractName, GenericContract, InheritedFunctions } from "~~/utils/scaffold-eth/contract";
 
 export const useFacetFunctionsToDisplay = <TContractName extends ContractName>(contractName: TContractName) => {
-  const { data: diamondContractData } = useDeployedContractInfo("Diamond");
+  const { data: diamondContractData } = useDeployedContractInfo("YourDiamondContract");
   const { data: diamondFacetData } = useDeployedContractInfo(contractName);
 
   const [writableFunctionsToDisplay, setWritableFunctionsToDisplay] = useState<any[]>([]);

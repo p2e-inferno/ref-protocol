@@ -5,7 +5,7 @@ import { useDeployedContractInfo, useDiamondLoupe } from "~~/hooks/scaffold-eth"
 import { useFacetFunctionsToDisplay } from "~~/hooks/scaffold-eth/useFacetFunctionsToDisplay";
 
 export const DiamondLoupe = () => {
-  const { data: diamondContractData } = useDeployedContractInfo("Diamond");
+  const { data: diamondContractData } = useDeployedContractInfo("YourDiamondContract");
   const { readableFunctionsToDisplay } = useFacetFunctionsToDisplay("DiamondLoupeFacet");
 
   const diamondLoupe = useDiamondLoupe();
