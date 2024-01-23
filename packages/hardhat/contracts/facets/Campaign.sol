@@ -1,19 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >=0.8.2 <0.9.0;
 
-import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@unlock-protocol/contracts/dist/PublicLock/IPublicLockV12.sol";
 import "../libraries/LibCampaignStorage.sol";
 import "../libraries/LibAffiliateStorage.sol";
 import "../libraries/LibRefereeStorage.sol";
+import "../libraries/LibAppStorage.sol";
 import "./RefereeFacet.sol";
-// Structs imported from AppStorage
-error TOO_BIG();
-error NOT_AUTHORIZED();
 
 contract CampaignHook {
     address campaignId = address(this);
-    mapping(address => bool) public isAffiliate;
+    mapping(address => bool) public isCampaignAffiliate;
     
     event NewReferee(address indexed campaignId, address indexed _buyer, address referrer, uint256 tokenId);
     event NewAffiliate(address indexed affiliate, address campaignId);
@@ -46,14 +43,14 @@ contract CampaignHook {
         // check if user has a valid key
         require(IPublicLockV12(_lockAddress).getHasValidKey(msg.sender), "No valid key");
         // check if user is already an affiliate
-        require(isAffiliate[msg.sender] == false, "Already an Affiliate");
-        _setIsAffiliate(msg.sender, true);
+        require(isCampaignAffiliate[msg.sender] == false, "Already an Affiliate in this campaign");
         // set new affiliate data
         AffiliateInfo memory _newAffiliate;
         _newAffiliate.campaignId = campaignId;
         _newAffiliate.affiliateId = msg.sender;
         _newAffiliate.referrer = _referrer;
-        _updateAffiliateStorage(_newAffiliate, _referrer, true);
+        _updateAffiliateStorage(_newAffiliate, _referrer);
+        _setIsAffiliate(msg.sender, true);
         emit NewAffiliate(msg.sender, campaignId);
     }
 
@@ -144,41 +141,41 @@ contract CampaignHook {
         return 0;
     }
     
-    function _updateAffiliateStorage(AffiliateInfo memory _affiliate, address _referrer, bool _isNewAffiliate) private {
+    function _updateAffiliateStorage(AffiliateInfo memory _affiliate, address _referrer) private {
         AffiliateStorage storage _affiliateStorage = LibAffiliateStorage.diamondStorage();
-         // if referrer not zero address add new affiliate to referrer's list of referees
-        if(_referrer != address(0)) _affiliateStorage.refereesOf[_referrer].push(_affiliate.affiliateId);
+        // add new affiliate to referrer's list of referees for this campaign
+        if(_referrer != address(0)) _affiliateStorage.refereesOf[_referrer][_affiliate.campaignId].push(_affiliate.affiliateId);
         // update this campaign's affiliates
         _affiliateStorage.affiliatesOf[campaignId].push(_affiliate);
-        // update campaign's affiliates list
-        if(!_isNewAffiliate) {
-            for (uint256 i = 0; i < _affiliateStorage.affiliatesOf[campaignId].length; i++) {
-                if(_affiliateStorage.affiliatesOf[campaignId][i].affiliateId == _affiliate.affiliateId){
-                    _affiliateStorage.affiliatesOf[campaignId][i] = _affiliate;
-                }
-            }
-        } else {
-            // add affiliate to campaign's affiliates list
-            _affiliateStorage.affiliatesOf[campaignId].push(_affiliate);
-            // add affiliate to allAffiliates list
+        // set affiliate data for this campaign
+        _affiliateStorage.affiliateData[_affiliate.affiliateId][_affiliate.campaignId] = _affiliate;
+        // check if affiliate already in allAffiliate list else add to allAffiliates list
+        AppStorage storage _appStorage = LibAppStorage.diamondStorage();
+        bool _isAffiliate = _appStorage.isAffiliate[_affiliate.affiliateId];
+        if(!_isAffiliate){
             _affiliateStorage.allAffiliates.push(_affiliate.affiliateId);
+            _appStorage.isAffiliate[_affiliate.affiliateId] = true;
         }
+ 
     }
 
     function _updateRefereeStorage(RefereeInfo memory _referee, address _referrer) private {
         RefereeStorage storage _refereeStorage = LibRefereeStorage.diamondStorage();
         // add new referee to referee data mapping
-        _refereeStorage.refereeData[_referee.id] = _referee;
+        _refereeStorage.refereeData[_referee.id][_referee.campaignId] = _referee;
         // if referrer not zero address add as the referrer 
-        if(_referrer != address(0)) _refereeStorage.referrerOf[_referee.id] = _referrer;
+        if(_referrer != address(0)) _refereeStorage.referrerOf[_referee.id][_referee.campaignId] = _referrer;
         // update allReferees list
-        _refereeStorage.allReferees.push(_referee.id);
-        // update campaign's affiliates list
+        AppStorage storage _appStorage = LibAppStorage.diamondStorage();
+        bool _isReferee = _appStorage.isReferee[_referee.id];
+        if(!_isReferee){
+            _refereeStorage.allReferees.push(_referee.id);
+            _appStorage.isReferee[_referee.id] = true;
+        }
     }
 
     function _setIsAffiliate(address _account, bool _isAffiliate) private {
-        isAffiliate[_account] = _isAffiliate;
+        isCampaignAffiliate[_account] = _isAffiliate;
     }
-
 
 }

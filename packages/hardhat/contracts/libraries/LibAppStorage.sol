@@ -15,6 +15,7 @@ struct AppStorage {
     mapping(address => uint) commissionOf;
     
     mapping(address => bool) isAffiliate;
+    mapping(address => bool) isReferee;
 }
 
 

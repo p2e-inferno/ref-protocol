@@ -11,10 +11,13 @@ struct AffiliateInfo {
 struct AffiliateStorage {
     // Tracks all affiliate.
     address[] allAffiliates;
-    // Keeps track of all customers referred by an affiliate.
-    mapping(address => address[]) refereesOf;
+    // Keeps track of all customers referred by an affiliate for a specific campaign.
+    mapping(address => mapping(address => address[])) refereesOf;
     // Keeps track of all affilates of a campaign.
     mapping(address => AffiliateInfo[]) affiliatesOf;
+    // keeps track of data for a specific affiliate in a campaign
+    // maps affiliate => campaignId => AffiliateInfo
+    mapping(address => mapping(address => AffiliateInfo)) affiliateData;
 }
 
 library LibAffiliateStorage {
