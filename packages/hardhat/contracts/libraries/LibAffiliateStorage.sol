@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./AppConstants.sol";
-
 struct AffiliateInfo {
     address campaignId;
     address affiliateId;
@@ -12,7 +10,7 @@ struct AffiliateInfo {
 
 struct AffiliateStorage {
     // Tracks all affiliate.
-    AffiliateInfo[] affiliates;
+    address[] allAffiliates;
     // Keeps track of all customers referred by an affiliate.
     mapping(address => address[]) refereesOf;
     // Keeps track of all affilates of a campaign.

@@ -4,17 +4,23 @@ pragma solidity ^0.8.0;
 import "./AppConstants.sol";
 
 struct CampaignInfo {
+    string name;
     address campaignId;
     address owner;
     // NFT contract address
-    address nftAddress;
+    address lockAddress;
     // Commission per level (e.g., [5, 2, 1] - 5% for level 1, 2% for level 2, 1% for level 3)
-    uint[3] commissionRate;
+    uint[] tiersCommission;
+    uint256 commissionBalance;
+    uint256 nonCommissionBalance;
 }
 
 struct CampaignStorage {
-    mapping(address => CampaignInfo) nftTocampaign;
-    CampaignInfo[] campaigns;
+    // maps lock (address) to campaignId (address) for a specific campaign
+    mapping(address => mapping(address => CampaignInfo)) lockTocampaign;
+    // maps a campaignId to a campaign
+    mapping(address => CampaignInfo) campaignsById;
+    CampaignInfo[] allCampaigns;
 }
 
 library LibCampaignStorage {
