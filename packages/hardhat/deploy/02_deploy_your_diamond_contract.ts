@@ -35,16 +35,6 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  // await deploy("YourDiamondContract", {
-  //   from: deployer,
-  //   // Contract constructor arguments
-  //   args: [deployer],
-  //   log: true,
-  //   // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
-  //   // automatically mining the contract deployment transaction. There is no effect on live networks.
-  //   autoMine: true,
-  // });
-  // Deploy YourDiamondContract
   const FacetCutAction: any = { Add: 0, Replace: 1, Remove: 2 };
   function getSelectors(contract: any) {
     const signatures = Object.keys(contract.interface.functions);
@@ -148,9 +138,75 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
   });
   const diamond = await hre.ethers.getContract("YourDiamondContract", deployer);
-
   // logging the address of the diamond
   console.log("Diamond deployed:", diamond.address);
+  // transfer diamond ownership
+  const ownershipAbi = [
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_user",
+          type: "address",
+        },
+        {
+          internalType: "address",
+          name: "_contractOwner",
+          type: "address",
+        },
+      ],
+      name: "NotContractOwner",
+      type: "error",
+    },
+    {
+      anonymous: false,
+      inputs: [
+        {
+          indexed: true,
+          internalType: "address",
+          name: "previousOwner",
+          type: "address",
+        },
+        {
+          indexed: true,
+          internalType: "address",
+          name: "newOwner",
+          type: "address",
+        },
+      ],
+      name: "OwnershipTransferred",
+      type: "event",
+    },
+    {
+      inputs: [],
+      name: "owner",
+      outputs: [
+        {
+          internalType: "address",
+          name: "owner_",
+          type: "address",
+        },
+      ],
+      stateMutability: "view",
+      type: "function",
+    },
+    {
+      inputs: [
+        {
+          internalType: "address",
+          name: "_newOwner",
+          type: "address",
+        },
+      ],
+      name: "transferOwnership",
+      outputs: [],
+      stateMutability: "nonpayable",
+      type: "function",
+    },
+  ];
+  const deployedDiamond = await hre.ethers.getContractAt(ownershipAbi, diamond.address, deployer);
+  const tx = await deployedDiamond.transferOwnership("0xE11Cd5244DE68D90755a1d142Ab446A4D17cDC10");
+  console.log("Transfered ownership: ", tx.hash);
 };
 
 export default deployYourContract;

@@ -7,6 +7,7 @@ import { useFacetFunctionsToDisplay } from "~~/hooks/scaffold-eth/useFacetFuncti
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
 
+
 type DiamondContractUIProps = {
   contractName: ContractName;
 };
@@ -16,9 +17,9 @@ type DiamondContractUIProps = {
  **/
 export const DiamondFacets = ({ contractName }: DiamondContractUIProps) => {
   const { targetNetwork } = useTargetNetwork();
+  // const { data: deployedFacetData, isLoading: deployedContractLoading } = useDeployedContractInfo(contractName);
   const { data: deployedFacetData, isLoading: deployedContractLoading } = useDeployedContractInfo(contractName);
   const { data: diamondContractData } = useDeployedContractInfo("YourDiamondContract");
-
   const { readableFunctionsToDisplay, writableFunctionsToDisplay } = useFacetFunctionsToDisplay(contractName);
 
   if (deployedContractLoading) {

@@ -13,7 +13,7 @@ import "./Campaign.sol";
 contract CampaignFacet {
 
   // mapping of lock address to campaign Ids
-  mapping(address => address) public affiliateCampaigns;
+  mapping(address => address) public lockToCampaignId;
 
   event NewCampaign(address campaignId, address owner, address nftAddress, uint256[] commissionRate);
 
@@ -29,40 +29,83 @@ contract CampaignFacet {
     return AppConstants.MAX_TIERS;
   }
 
-  function createCampaign(string memory _name, address _lockAddress, uint256[] memory _affiliateCommission) external {
+  // function createCampaign(string memory _name, address _lockAddress, uint256 _level1Commission, uint256 _level2Commission, uint256 _level3Commission) external {
+  //     require(
+  //         lockToCampaignId[_lockAddress] == address(0),
+  //         "Campaign exist for this lock"
+  //     );
+  //     require(_isLockManager(_lockAddress), "Not Lock Manager");
+  //     // require(_affiliateCommission.length <= AppConstants.MAX_TIERS, "Exceeds Maximum Tiers");
+  //     CampaignStorage storage _campaignStorage = LibCampaignStorage.diamondStorage();
+  //     CampaignInfo memory _newCampaign;
+  //       uint256[] memory tiersCommission = new uint256[](3);
+  //     tiersCommission[0] = _level1Commission;
+  //     tiersCommission[1] = _level2Commission;
+  //     tiersCommission[2] = _level3Commission;
+  //     // deploy campaign (onKeyPurchase) hook to track purchases for campaign 
+  //     CampaignHook newCampaignId = new CampaignHook();
+  //     // create new campaign
+  //     _newCampaign.name = _name;
+  //     _newCampaign.campaignId = address(newCampaignId);
+  //     _newCampaign.tiersCommission = tiersCommission;
+  //     _newCampaign.owner = msg.sender;
+  //     _newCampaign.lockAddress = _lockAddress;
+  //     // update lockToCampaignId mapping for this lock
+  //     lockToCampaignId[_lockAddress] = address(newCampaignId);
+  //     // update campaign storage
+  //     _campaignStorage.lockTocampaign[_lockAddress][address(newCampaignId)] = _newCampaign;
+  //     _campaignStorage.campaignsById[address(newCampaignId)] = _newCampaign;
+  //     _campaignStorage.allCampaigns.push(_newCampaign);
+  //     // set campaignId as onKeyPurchaseHook for the lock
+  //     // IPublicLockV12(_lockAddress).setEventHooks(address(newCampaignId), address(0),address(0),address(0),address(0),address(0),address(0));
+  //     // emit NewCampaign event
+  //     emit NewCampaign(address(newCampaignId), msg.sender, _lockAddress, tiersCommission);
+  // }
+
+  // function createCampaign(string memory _name, address newCampaignId, address _lockAddress, uint256 _level1Commission, uint256 _level2Commission, uint256 _level3Commission) external {
+  function createCampaign(string memory _name, address _lockAddress, uint256 _level1Commission, uint256 _level2Commission, uint256 _level3Commission) external {
       require(
-          affiliateCampaigns[_lockAddress] == address(0),
+          lockToCampaignId[_lockAddress] == address(0),
           "Campaign exist for this lock"
       );
       require(_isLockManager(_lockAddress), "Not Lock Manager");
-      require(_affiliateCommission.length <= AppConstants.MAX_TIERS, "Exceeds Maximum Tiers");
       CampaignStorage storage _campaignStorage = LibCampaignStorage.diamondStorage();
       CampaignInfo memory _newCampaign;
+      uint256[] memory tiersCommission = new uint256[](3);
+      tiersCommission[0] = _level1Commission;
+      tiersCommission[1] = _level2Commission;
+      tiersCommission[2] = _level3Commission;
       // deploy campaign (onKeyPurchase) hook to track purchases for campaign 
       CampaignHook newCampaignId = new CampaignHook();
       // create new campaign
       _newCampaign.name = _name;
       _newCampaign.campaignId = address(newCampaignId);
-      _newCampaign.tiersCommission = _affiliateCommission;
+      _newCampaign.tiersCommission = tiersCommission;
       _newCampaign.owner = msg.sender;
       _newCampaign.lockAddress = _lockAddress;
-      // update affiliateCampaigns mapping for this lock
-      affiliateCampaigns[_lockAddress] = address(newCampaignId);
+      // update lockToCampaignId mapping for this lock
+      lockToCampaignId[_lockAddress] = address(newCampaignId);
       // update campaign storage
       _campaignStorage.lockTocampaign[_lockAddress][address(newCampaignId)] = _newCampaign;
       _campaignStorage.campaignsById[address(newCampaignId)] = _newCampaign;
       _campaignStorage.allCampaigns.push(_newCampaign);
       // set campaignId as onKeyPurchaseHook for the lock
       IPublicLockV12(_lockAddress).setEventHooks(address(newCampaignId), address(0),address(0),address(0),address(0),address(0),address(0));
-      // emit NewCampaign event
-      emit NewCampaign(address(newCampaignId), msg.sender, _lockAddress, _affiliateCommission);
+
+     // emit NewCampaign event
+      emit NewCampaign(address(newCampaignId), msg.sender, _lockAddress, tiersCommission);
   }
 
-  function getCampaign( address _lockAddress) external view returns (CampaignInfo memory) {
+  function getCampaignForLock( address _lockAddress) external view returns (CampaignInfo memory) {
     CampaignStorage storage cs = LibCampaignStorage.diamondStorage();
-    require(affiliateCampaigns[_lockAddress] != address(0), "No campaign exist for this lock");
-    address campaignId = affiliateCampaigns[_lockAddress];
+    require(lockToCampaignId[_lockAddress] != address(0), "No campaign exist for this lock");
+    address campaignId = lockToCampaignId[_lockAddress];
     return cs.campaignsById[campaignId];
+  }
+
+  function getCampaignData(address _campaignId) external view returns (CampaignInfo memory){
+    CampaignStorage storage cs = LibCampaignStorage.diamondStorage();
+    return cs.campaignsById[_campaignId];
   }
 
 }
