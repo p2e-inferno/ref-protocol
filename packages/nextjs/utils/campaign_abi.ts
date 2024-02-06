@@ -69,6 +69,41 @@ export const abi = [
   },
   {
     inputs: [],
+    name: "getAffiliatesOf",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "campaignId",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "affiliateId",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "referrer",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "balance",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct AffiliateInfo[]",
+        name: "",
+        type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "getCampaignData",
     outputs: [
       {
@@ -248,27 +283,24 @@ export const abi = [
   {
     inputs: [
       {
-        internalType: "string",
-        name: "_newName",
-        type: "string",
-      },
-    ],
-    name: "setName",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
         internalType: "address",
         name: "_lockAddress",
         type: "address",
       },
       {
-        internalType: "uint256[]",
-        name: "_tiersCommission",
-        type: "uint256[]",
+        internalType: "uint256",
+        name: "_level1Commission",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_level2Commission",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_level3Commission",
+        type: "uint256",
       },
     ],
     name: "setTiersCommission",

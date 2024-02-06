@@ -1038,1275 +1038,29 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
   },
-  31337: {
-    AffiliateFacet: {
-      address: "0x3347B4d90ebe72BeFb30444C9966B2B990aE9FcB",
-      abi: [
-        {
-          inputs: [],
-          name: "allAffiliates",
-          outputs: [
-            {
-              internalType: "address[]",
-              name: "",
-              type: "address[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_affiliate",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_campaignId",
-              type: "address",
-            },
-          ],
-          name: "getAffiliate",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "address",
-                  name: "campaignId",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "affiliateId",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "referrer",
-                  type: "address",
-                },
-                {
-                  internalType: "uint256",
-                  name: "balance",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct AffiliateInfo",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_campaignId",
-              type: "address",
-            },
-          ],
-          name: "getCampaignAffiliates",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "address",
-                  name: "campaignId",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "affiliateId",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "referrer",
-                  type: "address",
-                },
-                {
-                  internalType: "uint256",
-                  name: "balance",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct AffiliateInfo[]",
-              name: "",
-              type: "tuple[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_affiliate",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_campaignId",
-              type: "address",
-            },
-          ],
-          name: "getRefereesOf",
-          outputs: [
-            {
-              internalType: "address[]",
-              name: "",
-              type: "address[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {},
-    },
-    CampaignFacet: {
-      address: "0x3155755b79aA083bd953911C92705B7aA82a18F9",
-      abi: [
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: false,
-              internalType: "address",
-              name: "campaignId",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "owner",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "nftAddress",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "uint256[]",
-              name: "commissionRate",
-              type: "uint256[]",
-            },
-          ],
-          name: "NewCampaign",
-          type: "event",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          name: "affiliateCampaigns",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "_name",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "_lockAddress",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "_level1Commission",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_level2Commission",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_level3Commission",
-              type: "uint256",
-            },
-          ],
-          name: "createCampaign",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_campaignId",
-              type: "address",
-            },
-          ],
-          name: "getCampaignData",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "string",
-                  name: "name",
-                  type: "string",
-                },
-                {
-                  internalType: "address",
-                  name: "campaignId",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "owner",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "lockAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "uint256[]",
-                  name: "tiersCommission",
-                  type: "uint256[]",
-                },
-                {
-                  internalType: "uint256",
-                  name: "commissionBalance",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "nonCommissionBalance",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct CampaignInfo",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_lockAddress",
-              type: "address",
-            },
-          ],
-          name: "getCampaignForLock",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "string",
-                  name: "name",
-                  type: "string",
-                },
-                {
-                  internalType: "address",
-                  name: "campaignId",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "owner",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "lockAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "uint256[]",
-                  name: "tiersCommission",
-                  type: "uint256[]",
-                },
-                {
-                  internalType: "uint256",
-                  name: "commissionBalance",
-                  type: "uint256",
-                },
-                {
-                  internalType: "uint256",
-                  name: "nonCommissionBalance",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct CampaignInfo",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getMaxTiers",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "pure",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_campaignId",
-              type: "address",
-            },
-            {
-              internalType: "string",
-              name: "_name",
-              type: "string",
-            },
-            {
-              internalType: "address",
-              name: "_lock",
-              type: "address",
-            },
-          ],
-          name: "setSomethingCool",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {},
-    },
-    DiamondCutFacet: {
-      address: "0x22753E4264FDDc6181dc7cce468904A80a363E44",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_selector",
-              type: "bytes4",
-            },
-          ],
-          name: "CannotAddFunctionToDiamondThatAlreadyExists",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4[]",
-              name: "_selectors",
-              type: "bytes4[]",
-            },
-          ],
-          name: "CannotAddSelectorsToZeroAddress",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_selector",
-              type: "bytes4",
-            },
-          ],
-          name: "CannotRemoveFunctionThatDoesNotExist",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_selector",
-              type: "bytes4",
-            },
-          ],
-          name: "CannotRemoveImmutableFunction",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_selector",
-              type: "bytes4",
-            },
-          ],
-          name: "CannotReplaceFunctionThatDoesNotExists",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_selector",
-              type: "bytes4",
-            },
-          ],
-          name: "CannotReplaceFunctionWithTheSameFunctionFromTheSameFacet",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4[]",
-              name: "_selectors",
-              type: "bytes4[]",
-            },
-          ],
-          name: "CannotReplaceFunctionsFromFacetWithZeroAddress",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_selector",
-              type: "bytes4",
-            },
-          ],
-          name: "CannotReplaceImmutableFunction",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint8",
-              name: "_action",
-              type: "uint8",
-            },
-          ],
-          name: "IncorrectFacetCutAction",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_initializationContractAddress",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "_calldata",
-              type: "bytes",
-            },
-          ],
-          name: "InitializationFunctionReverted",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_contractAddress",
-              type: "address",
-            },
-            {
-              internalType: "string",
-              name: "_message",
-              type: "string",
-            },
-          ],
-          name: "NoBytecodeAtAddress",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_facetAddress",
-              type: "address",
-            },
-          ],
-          name: "NoSelectorsProvidedForFacetForCut",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_contractOwner",
-              type: "address",
-            },
-          ],
-          name: "NotContractOwner",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_facetAddress",
-              type: "address",
-            },
-          ],
-          name: "RemoveFacetAddressMustBeZeroAddress",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              components: [
-                {
-                  internalType: "address",
-                  name: "facetAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "enum IDiamond.FacetCutAction",
-                  name: "action",
-                  type: "uint8",
-                },
-                {
-                  internalType: "bytes4[]",
-                  name: "functionSelectors",
-                  type: "bytes4[]",
-                },
-              ],
-              indexed: false,
-              internalType: "struct IDiamond.FacetCut[]",
-              name: "_diamondCut",
-              type: "tuple[]",
-            },
-            {
-              indexed: false,
-              internalType: "address",
-              name: "_init",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "bytes",
-              name: "_calldata",
-              type: "bytes",
-            },
-          ],
-          name: "DiamondCut",
-          type: "event",
-        },
-        {
-          inputs: [
-            {
-              components: [
-                {
-                  internalType: "address",
-                  name: "facetAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "enum IDiamond.FacetCutAction",
-                  name: "action",
-                  type: "uint8",
-                },
-                {
-                  internalType: "bytes4[]",
-                  name: "functionSelectors",
-                  type: "bytes4[]",
-                },
-              ],
-              internalType: "struct IDiamond.FacetCut[]",
-              name: "_diamondCut",
-              type: "tuple[]",
-            },
-            {
-              internalType: "address",
-              name: "_init",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "_calldata",
-              type: "bytes",
-            },
-          ],
-          name: "diamondCut",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        diamondCut: "contracts/interfaces/IDiamondCut.sol",
-      },
-    },
-    DiamondLoupeFacet: {
-      address: "0xA7c59f010700930003b33aB25a7a0679C860f29c",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_functionSelector",
-              type: "bytes4",
-            },
-          ],
-          name: "facetAddress",
-          outputs: [
-            {
-              internalType: "address",
-              name: "facetAddress_",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "facetAddresses",
-          outputs: [
-            {
-              internalType: "address[]",
-              name: "facetAddresses_",
-              type: "address[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_facet",
-              type: "address",
-            },
-          ],
-          name: "facetFunctionSelectors",
-          outputs: [
-            {
-              internalType: "bytes4[]",
-              name: "_facetFunctionSelectors",
-              type: "bytes4[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "facets",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "address",
-                  name: "facetAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "bytes4[]",
-                  name: "functionSelectors",
-                  type: "bytes4[]",
-                },
-              ],
-              internalType: "struct IDiamondLoupe.Facet[]",
-              name: "facets_",
-              type: "tuple[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_interfaceId",
-              type: "bytes4",
-            },
-          ],
-          name: "supportsInterface",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        facetAddress: "contracts/interfaces/IDiamondLoupe.sol",
-        facetAddresses: "contracts/interfaces/IDiamondLoupe.sol",
-        facetFunctionSelectors: "contracts/interfaces/IDiamondLoupe.sol",
-        facets: "contracts/interfaces/IDiamondLoupe.sol",
-        supportsInterface: "contracts/interfaces/IERC165.sol",
-      },
-    },
-    OwnershipFacet: {
-      address: "0xfaAddC93baf78e89DCf37bA67943E1bE8F37Bb8c",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_user",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_contractOwner",
-              type: "address",
-            },
-          ],
-          name: "NotContractOwner",
-          type: "error",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "previousOwner",
-              type: "address",
-            },
-            {
-              indexed: true,
-              internalType: "address",
-              name: "newOwner",
-              type: "address",
-            },
-          ],
-          name: "OwnershipTransferred",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "owner_",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_newOwner",
-              type: "address",
-            },
-          ],
-          name: "transferOwnership",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {
-        owner: "contracts/interfaces/IERC173.sol",
-        transferOwnership: "contracts/interfaces/IERC173.sol",
-      },
-    },
-    RefereeFacet: {
-      address: "0x276C216D241856199A83bf27b2286659e5b877D3",
-      abi: [
-        {
-          inputs: [],
-          name: "getAllReferees",
-          outputs: [
-            {
-              internalType: "address[]",
-              name: "",
-              type: "address[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_referee",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_campaignId",
-              type: "address",
-            },
-          ],
-          name: "getRefereeData",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "address",
-                  name: "campaignId",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "id",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "referrer",
-                  type: "address",
-                },
-                {
-                  internalType: "uint256",
-                  name: "keyPurchased",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct RefereeInfo",
-              name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_referee",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_campaignId",
-              type: "address",
-            },
-          ],
-          name: "referralOf",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-      ],
-      inheritedFunctions: {},
-    },
-    YourContract: {
-      address: "0x3aAde2dCD2Df6a8cAc689EE797591b2913658659",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_owner",
-              type: "address",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "greetingSetter",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "newGreeting",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "bool",
-              name: "premium",
-              type: "bool",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "value",
-              type: "uint256",
-            },
-          ],
-          name: "GreetingChange",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "greeting",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "premium",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "_newGreeting",
-              type: "string",
-            },
-          ],
-          name: "setGreeting",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalCounter",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          name: "userGreetingCounter",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "withdraw",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
-      ],
-      inheritedFunctions: {},
-    },
-    YourDiamondContract: {
-      address: "0x5bf5b11053e734690269C6B9D438F8C9d48F528A",
-      abi: [
-        {
-          inputs: [
-            {
-              components: [
-                {
-                  internalType: "address",
-                  name: "facetAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "enum IDiamond.FacetCutAction",
-                  name: "action",
-                  type: "uint8",
-                },
-                {
-                  internalType: "bytes4[]",
-                  name: "functionSelectors",
-                  type: "bytes4[]",
-                },
-              ],
-              internalType: "struct IDiamond.FacetCut[]",
-              name: "_diamondCut",
-              type: "tuple[]",
-            },
-            {
-              components: [
-                {
-                  internalType: "address",
-                  name: "owner",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "init",
-                  type: "address",
-                },
-                {
-                  internalType: "bytes",
-                  name: "initCalldata",
-                  type: "bytes",
-                },
-              ],
-              internalType: "struct DiamondArgs",
-              name: "_args",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "payable",
-          type: "constructor",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_selector",
-              type: "bytes4",
-            },
-          ],
-          name: "CannotAddFunctionToDiamondThatAlreadyExists",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4[]",
-              name: "_selectors",
-              type: "bytes4[]",
-            },
-          ],
-          name: "CannotAddSelectorsToZeroAddress",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_selector",
-              type: "bytes4",
-            },
-          ],
-          name: "CannotRemoveFunctionThatDoesNotExist",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_selector",
-              type: "bytes4",
-            },
-          ],
-          name: "CannotRemoveImmutableFunction",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_selector",
-              type: "bytes4",
-            },
-          ],
-          name: "CannotReplaceFunctionThatDoesNotExists",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_selector",
-              type: "bytes4",
-            },
-          ],
-          name: "CannotReplaceFunctionWithTheSameFunctionFromTheSameFacet",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4[]",
-              name: "_selectors",
-              type: "bytes4[]",
-            },
-          ],
-          name: "CannotReplaceFunctionsFromFacetWithZeroAddress",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_selector",
-              type: "bytes4",
-            },
-          ],
-          name: "CannotReplaceImmutableFunction",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "bytes4",
-              name: "_functionSelector",
-              type: "bytes4",
-            },
-          ],
-          name: "FunctionNotFound",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint8",
-              name: "_action",
-              type: "uint8",
-            },
-          ],
-          name: "IncorrectFacetCutAction",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_initializationContractAddress",
-              type: "address",
-            },
-            {
-              internalType: "bytes",
-              name: "_calldata",
-              type: "bytes",
-            },
-          ],
-          name: "InitializationFunctionReverted",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_contractAddress",
-              type: "address",
-            },
-            {
-              internalType: "string",
-              name: "_message",
-              type: "string",
-            },
-          ],
-          name: "NoBytecodeAtAddress",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_facetAddress",
-              type: "address",
-            },
-          ],
-          name: "NoSelectorsProvidedForFacetForCut",
-          type: "error",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_facetAddress",
-              type: "address",
-            },
-          ],
-          name: "RemoveFacetAddressMustBeZeroAddress",
-          type: "error",
-        },
-        {
-          stateMutability: "payable",
-          type: "fallback",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
-        },
-      ],
-      inheritedFunctions: {},
-    },
-  },
   80001: {
     AffiliateFacet: {
-      address: "0x707bd33a2d51731B86A5ab8B6d2E316A58F2307E",
+      address: "0xAF18b89B58916C8f3765ea877E45379dd538F159",
       abi: [
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "affiliate",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "campaignId",
+              type: "address",
+            },
+          ],
+          name: "NewAffiliate",
+          type: "event",
+        },
         {
           inputs: [],
           name: "allAffiliates",
@@ -2324,7 +1078,7 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
-              name: "_affiliate",
+              name: "_referrer",
               type: "address",
             },
             {
@@ -2333,7 +1087,25 @@ const deployedContracts = {
               type: "address",
             },
           ],
-          name: "getAffiliate",
+          name: "becomeAffiliate",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_affiliateId",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "getAffiliateInfo",
           outputs: [
             {
               components: [
@@ -2361,6 +1133,47 @@ const deployedContracts = {
               internalType: "struct AffiliateInfo",
               name: "",
               type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "getAffiliatesOf",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "address",
+                  name: "campaignId",
+                  type: "address",
+                },
+                {
+                  internalType: "address",
+                  name: "affiliateId",
+                  type: "address",
+                },
+                {
+                  internalType: "address",
+                  name: "referrer",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "balance",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct AffiliateInfo[]",
+              name: "",
+              type: "tuple[]",
             },
           ],
           stateMutability: "view",
@@ -2431,11 +1244,35 @@ const deployedContracts = {
           stateMutability: "view",
           type: "function",
         },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "isCampaignAffiliate",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
       ],
       inheritedFunctions: {},
     },
     CampaignFacet: {
-      address: "0x4E639560526f4571095ce5096a1b2347D13bc3ab",
+      address: "0xefD82D8B32d5ee6C28672995F58879867cc7C0d0",
       abi: [
         {
           anonymous: false,
@@ -2467,6 +1304,50 @@ const deployedContracts = {
           ],
           name: "NewCampaign",
           type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "campaignId",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "_buyer",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "referrer",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
+          ],
+          name: "NewReferee",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "UNADUS",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
         },
         {
           inputs: [
@@ -2624,6 +1505,19 @@ const deployedContracts = {
             },
           ],
           stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_UNADUSAddress",
+              type: "address",
+            },
+          ],
+          name: "initUNADUS",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -2645,11 +1539,123 @@ const deployedContracts = {
           stateMutability: "view",
           type: "function",
         },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_commission",
+              type: "uint256",
+            },
+          ],
+          name: "onNonReferredPurchase",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_tokenId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_recipient",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_affiliateAddress",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_commission",
+              type: "uint256",
+            },
+          ],
+          name: "onReferredPurchase",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_newName",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "setName",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_level1Commission",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_level2Commission",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_level3Commission",
+              type: "uint256",
+            },
+          ],
+          name: "setTiersCommission",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
       ],
-      inheritedFunctions: {},
+      inheritedFunctions: {
+        onNonReferredPurchase: "contracts/interfaces/ICampaignFacet.sol",
+        onReferredPurchase: "contracts/interfaces/ICampaignFacet.sol",
+      },
     },
     DiamondCutFacet: {
-      address: "0x66ED41a8F94A756fAd1d57df4ec611DdF1D9f2e9",
+      address: "0xad301b5748DC07D8C8B96102C052280A332aAfDE",
       abi: [
         {
           inputs: [
@@ -2908,7 +1914,7 @@ const deployedContracts = {
       },
     },
     DiamondLoupeFacet: {
-      address: "0x3D77Fd3Baa79fb3B06450743130a76AD08008Db6",
+      address: "0xF33f085dC0BD3CA9CdA42B72C0a08f74f1974884",
       abi: [
         {
           inputs: [
@@ -3015,7 +2021,7 @@ const deployedContracts = {
       },
     },
     OwnershipFacet: {
-      address: "0xd6D8608a7a96c0718D58a0Df1520276ad7b5b513",
+      address: "0x16030Fa10190E5db43ade7711705ACd577E38002",
       abi: [
         {
           inputs: [
@@ -3085,7 +2091,7 @@ const deployedContracts = {
       },
     },
     RefereeFacet: {
-      address: "0x58B6A43B342f7497414a89Ad7ac2f56F6fb102Fb",
+      address: "0xB139D762460bB0E2aF9E3B6863a9E3CC2F232929",
       abi: [
         {
           inputs: [],
@@ -3174,7 +2180,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourContract: {
-      address: "0x324C7Fc5416503e1AD3b92208913f152462f9c7a",
+      address: "0xe35634191A266776c878AC53b6cF080146eD0360",
       abi: [
         {
           inputs: [
@@ -3317,7 +2323,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourDiamondContract: {
-      address: "0xd04E42b6ceBD12CE3D43D3c68e9D1bb524111802",
+      address: "0x956Ae90D5d81cFeec283BcA933c63b66E2Ad3F90",
       abi: [
         {
           inputs: [
