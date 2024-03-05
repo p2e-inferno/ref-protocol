@@ -6,7 +6,6 @@ import "./AppConstants.sol";
 struct AppStorage {
     // Tracks entry status to prevent re-entrancy attacks
     uint256 _status;
-  
 
     // This tracks the customers that an affiliate (referrer) referred
     mapping(address => address[]) referralsOf;

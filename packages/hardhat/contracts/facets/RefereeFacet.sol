@@ -26,12 +26,11 @@ contract RefereeFacet {
     AppStorage internal appStorage;
     // RefereeStorage internal refereeStorage;
 
-
     /// @notice This view function returns the rental status of NFT using tokenID
     /// @dev The tokenID is used to fetch rental details of the NFT from Diamond Storage
     /// @param _referee The tokenID of the NFT to fetch rental status
     /// @return This function returns Rental Information of NFT using Diamond Storage
-    function referralOf(address _referee, address _campaignId) external view returns (address) {
+    function referrerOf(address _referee, address _campaignId) external view returns (address) {
       RefereeStorage storage _storage = LibRefereeStorage.diamondStorage();
       return _storage.referrerOf[_referee][_campaignId];
     }

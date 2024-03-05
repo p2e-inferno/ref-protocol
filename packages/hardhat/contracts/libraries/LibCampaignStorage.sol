@@ -9,10 +9,11 @@ struct CampaignInfo {
     address owner;
     // NFT contract address
     address lockAddress;
-    // Commission per level (e.g., [5, 2, 1] - 5% for level 1, 2% for level 2, 1% for level 3)
+    // Commission per level in basis points (e.g., [5000, 2000, 1000] - 5% for level 1, 2% for level 2, 1% for level 3)
     uint[] tiersCommission;
     uint256 commissionBalance;
     uint256 nonCommissionBalance;
+    uint256 delay;
 }
 
 struct CampaignStorage {
@@ -20,6 +21,8 @@ struct CampaignStorage {
     mapping(address => mapping(address => CampaignInfo)) lockTocampaign;
     // maps a campaignId to a campaign
     mapping(address => CampaignInfo) campaignsById;
+    // Determines the withdrawal delay for each token sale in a campaign
+    mapping(address => uint) withdrawalDelay;
     CampaignInfo[] allCampaigns;
 }
 

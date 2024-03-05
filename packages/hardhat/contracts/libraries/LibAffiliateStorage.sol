@@ -1,12 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+struct SaleInfo {
+    uint256 commissionAmount;
+    uint256 date;
+}
+
 struct AffiliateInfo {
     address campaignId;
     address affiliateId;
     address referrer;
-    uint256 balance;
+    uint256 balance; // Total affiliate's sales balance
+    uint256[] soldTokens; // List of tokenIds of sold keys
+    uint256[] refereesSoldTokens; // List of tokenIds of keys sold by referees
+    mapping(uint256 => SaleInfo) saleData; // Mapping of tokenId to sales info
 }
+    
 
 struct AffiliateStorage {
     // Tracks all affiliate.
@@ -14,10 +23,12 @@ struct AffiliateStorage {
     // Keeps track of all customers referred by an affiliate for a specific campaign.
     mapping(address => mapping(address => address[])) refereesOf;
     // Keeps track of all affilates of a campaign.
-    mapping(address => AffiliateInfo[]) affiliatesOf;
-    // keeps track of data for a specific affiliate in a campaign
-    // maps affiliate => campaignId => AffiliateInfo
-    mapping(address => mapping(address => AffiliateInfo)) affiliateData;
+    mapping(address => address[]) affiliatesOf;
+    /**************************************************
+    * keeps track of data for a specific affiliate in a campaign
+    * Maps affiliateId => campaignId => AffiliateInfo 
+    **************************************************/
+    mapping(address => mapping(address => AffiliateInfo)) affiliateData; 
 }
 
 library LibAffiliateStorage {
@@ -29,6 +40,5 @@ library LibAffiliateStorage {
             ds.slot := storagePosition
         }
     }
-
 
 }

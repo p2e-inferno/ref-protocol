@@ -10,11 +10,13 @@ import { useAccount } from "wagmi";
 // import { useContractWrite } from "wagmi";
 import { MetaHeader } from "~~/components/MetaHeader";
 import { DiamondContractUI } from "~~/components/diamond/DiamondContractUI";
-import { abi } from "~~/utils/campaign_abi";
+import { affiliateAbi } from "~~/utils/affiliate_abi";
+import { campaignAbi } from "~~/utils/campaign_abi";
 import { useEthersSigner } from "~~/utils/ethers";
 // import { useEthersProvider } from "~~/utils/ethers-provider";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
 import { getContractNames } from "~~/utils/scaffold-eth/contractNames";
+
 
 const selectedContractStorageKey = "scaffoldEth2.selectedContract";
 const contractNames = getContractNames();
@@ -27,35 +29,39 @@ const DebugDiamond: NextPage = () => {
   const { address } = useAccount();
 
   const signer = useEthersSigner();
+  const unadusAddress = "0x4E639560526f4571095ce5096a1b2347D13bc3ab";
 
   const checkout = async () => {
     const publicLockContract = new ethers.Contract(
-      "0xf1f85abef77169e1602a6ca7f45ab71aa1b0ae4b",
+      "0xc1101345aeb844b0d16460fbeb6b3aded37b9b3d",
       PublicLockV13.abi,
       signer,
     );
     const amount = await publicLockContract.keyPrice();
-    const unadusAddress = "0x5B861daA215Cbe9b3d2F9BF2Ded95E6F353FBf4D";
     const purchaseParams = [
       [amount],
       [address],
       [unadusAddress],
       [ethers.constants.AddressZero],
-      [[]],
-      // [ethers.utils.defaultAbiCoder.encode(["address"], ["0xca7632327567796e51920f6b16373e92c7823854"])],
+      // [[]],
+      [ethers.utils.defaultAbiCoder.encode(["address"], ["0xE11Cd5244DE68D90755a1d142Ab446A4D17cDC10"])],
     ];
     const options = {
       value: amount,
-      gasLimit: 30000000,
+      gasLimit: 3000000,
     };
     const tx = await publicLockContract.purchase(...purchaseParams, options);
+    // const tx = await publicLockContract.purchase(...purchaseParams);
     console.log("ccvc::", tx);
   };
 
   const becomeAffiliate = async () => {
     try {
-      const campaignContract = new ethers.Contract("0x503bB6b04e23019E6de37EB3f0989A1bEB0826A1", abi, signer);
-      const tx = await campaignContract.becomeAffiliate("0xca7632327567796e51920f6b16373e92c7823854");
+      const campaignContract = new ethers.Contract(unadusAddress, affiliateAbi, signer);
+      const tx = await campaignContract.becomeAffiliate(
+        "0x0000000000000000000000000000000000000000",
+        "0xEC4b564926c860b0AD5A38bB67Ea8BFeA39A441a",
+      );
       console.log("txX::becomeAffiliate", tx);
     } catch (e) {
       console.log("AFFILIATE_ERR::", e);
@@ -64,7 +70,7 @@ const DebugDiamond: NextPage = () => {
 
   const setName = async () => {
     try {
-      const campaignContract = new ethers.Contract("0x503bB6b04e23019E6de37EB3f0989A1bEB0826A1", abi, signer);
+      const campaignContract = new ethers.Contract("0x503bB6b04e23019E6de37EB3f0989A1bEB0826A1", campaignAbi, signer);
       // const tx = await campaignContract.becomeAffiliate("0xca7632327567796e51920f6b16373e92c7823854");
       const tx = await campaignContract.setName("FERNO VIBES: Genesis");
       console.log("txX::setName", tx);
@@ -75,7 +81,7 @@ const DebugDiamond: NextPage = () => {
 
   async function setTiersCommission() {
     try {
-      const campaignContract = new ethers.Contract("0xea4F659F633B6836244098752BEec05d2fF2167E", abi, signer);
+      const campaignContract = new ethers.Contract("0xea4F659F633B6836244098752BEec05d2fF2167E", campaignAbi, signer);
       // const tx = await campaignContract.becomeAffiliate("0xca7632327567796e51920f6b16373e92c7823854");
       const tx = await campaignContract.setTiersCommission(
         "0xf1f85abef77169e1602a6ca7f45ab71aa1b0ae4b",
