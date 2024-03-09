@@ -1,25 +1,13 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity >=0.8.2 <0.9.0;
 
 import "@unlock-protocol/contracts/dist/PublicLock/IPublicLockV12.sol";
-import "../libraries/LibCampaignStorage.sol";
-import "../libraries/LibAffiliateStorage.sol";
 import "../interfaces/ICampaignFacet.sol";
-import "../libraries/LibRefereeStorage.sol";
-import "../libraries/LibAppStorage.sol";
-import "./RefereeFacet.sol";
-
 
 /******************************************************
  * Purpose
  * deploy onKeyPurchase hook to track referrals for a lock
- * ****************************************************
- * Todos
- * move write functions to CampaignFacet - done
- * test becomeAffiliate()
- * test purchase
- * calculate commission
- * create frontend
+ * *******************************************************
  */
 contract CampaignHook {
     address campaignId = address(this);

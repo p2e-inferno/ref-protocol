@@ -20,86 +20,54 @@ library Utilities {
     address levelThreeReferrer = refereeStorage.referrerOf[levelTwoReferrer][_campaignId];
     return (levelTwoReferrer, levelThreeReferrer);
   }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-  // /**
-  //  * @dev Handles the calculation and distribution of affiliate payout and updates campaign commission balances
-  //  * @notice Distributes affiliate payouts according to a tiered commission model
-  //  * @param _commission Total commission to distribute
-  //  * @param _affiliateAddress The address of the affiliate
-  //  * @param _campaignId The unique identifier for the campaign
-  //  * @return levelOneShare Commission share for Level 1 referral
-  //  * @return levelTwoShare Commission share for Level 2 referral
-  //  * @return levelThreeShare Commission share for Level 3 referral
-  //  */
-  // function _calculateAffiliatePayout(
-  //   uint256 _commission, address _affiliateAddress, address _campaignId
-  // ) 
-  //   internal 
-  //   returns(uint256 levelOneShare, uint256 levelTwoShare, uint256 levelThreeShare)
-  // {
-  //   CampaignStorage storage cs = LibCampaignStorage.diamondStorage();
-  //   CampaignInfo memory campaign = cs.campaignsById[_campaignId];
-  //   // address levelOneReferrer = _affiliateAddress;
-  //   (address levelTwoReferrer, address levelThreeReferrer) = _getMultiLevelReferrers(_affiliateAddress, _campaignId);
-
-  //   uint256 totalTiersCommission = _getTotalTiersCommission(campaign);
-  //   levelOneShare = _calculateShare(_commission, campaign.tiersCommission[0], totalTiersCommission);
-  //   levelTwoShare= _calculateShare(_commission, campaign.tiersCommission[1], totalTiersCommission);
-  //   levelThreeShare = _calculateShare(_commission, campaign.tiersCommission[2], totalTiersCommission);
-  //   campaign.commissionBalance += levelOneShare;
-  //   if(levelTwoReferrer == address(0)) {
-  //     _updateUnusedCommissionBalance(_commission - levelOneShare, campaign);
-  //   } else{
-  //     campaign.commissionBalance += levelTwoShare;
-  //     if(levelThreeReferrer == address(0)) {
-  //       _updateCampaignStorage(campaign);
-  //     }else {
-  //       campaign.commissionBalance += levelThreeShare;
-  //       _updateCampaignStorage(campaign);
-  //     }
-  //   }
-  // }
 
   /**
    * @dev Handles the calculation and distribution of affiliate payout and updates campaign commission balances
    * @notice Distributes affiliate payouts according to a tiered commission model
    * @param _commission Total commission to distribute
-   * @param _affiliateAddress The address of the affiliate
    * @param _campaignId The unique identifier for the campaign
    * @return levelOneShare Commission share for Level 1 referral
    * @return levelTwoShare Commission share for Level 2 referral
    * @return levelThreeShare Commission share for Level 3 referral
    */
-  function _calculateAffiliatePayout(
-  uint256 _commission, 
-  address _affiliateAddress, 
-  address _campaignId
+  function _calculateAffiliatesPayout(
+    uint256 _commission, 
+    address _campaignId
   ) 
+    view
     internal 
     returns(uint256 levelOneShare, uint256 levelTwoShare, uint256 levelThreeShare)
   {
-  CampaignStorage storage cs = LibCampaignStorage.diamondStorage();
-  CampaignInfo memory campaign = cs.campaignsById[_campaignId];
+    CampaignStorage storage cs = LibCampaignStorage.diamondStorage();
+    CampaignInfo memory campaign = cs.campaignsById[_campaignId];
 
-  (address levelTwoReferrer, address levelThreeReferrer) = _getMultiLevelReferrers(_affiliateAddress, _campaignId);
-
-  uint256 totalTiersCommission = _getTotalTiersCommission(campaign);
-  levelOneShare = _calculateShare(_commission, campaign.tiersCommission[0], totalTiersCommission);
-
-  campaign.commissionBalance += levelOneShare;
-
-  if(levelTwoReferrer != address(0)) {
+    uint256 totalTiersCommission = _getTotalTiersCommission(campaign);
+    levelOneShare = _calculateShare(_commission, campaign.tiersCommission[0], totalTiersCommission);
     levelTwoShare = _calculateShare(_commission, campaign.tiersCommission[1], totalTiersCommission);
-    campaign.commissionBalance += levelTwoShare;
+    levelThreeShare = _calculateShare(_commission, campaign.tiersCommission[2], totalTiersCommission);
 
-    if(levelThreeReferrer != address(0)) {
-      levelThreeShare = _calculateShare(_commission, campaign.tiersCommission[2], totalTiersCommission);
-      campaign.commissionBalance += levelThreeShare;
-    }
+    return (levelOneShare, levelTwoShare, levelThreeShare);
   }
 
-  _updateUnusedCommissionBalance(_commission - campaign.commissionBalance, campaign);
-  _updateCampaignStorage(campaign);
+  function _updateCampaignPayoutData(uint256 _l1Share, uint256 _l2Share, uint256 _l3Share, AffiliateUplineData memory _affiliateData) internal {
+    CampaignStorage storage cs = LibCampaignStorage.diamondStorage();
+    CampaignInfo memory campaign = cs.campaignsById[_affiliateData.campaignId];
+    require(campaign.campaignId == _affiliateData.campaignId, "Invalid campaign");
+    
+    // update campaign commission balance
+    campaign.commissionBalance += _l1Share;
+    // update campaign non commission balance
+    if(_affiliateData.levelTwoReferrer != address(0)){
+      campaign.commissionBalance += _l2Share;
+      if(_affiliateData.levelThreeReferrer != address(0)){
+        campaign.commissionBalance += _l3Share;
+      }else{
+        campaign.nonCommissionBalance += _l3Share;
+      }
+    }else{
+      campaign.nonCommissionBalance += (_l2Share + _l3Share);
+    }
+    _updateCampaignStorage(campaign);
   }
 
   function _addAffiliateReferee(address _affiliateAddress, address _campaignId, address _referee) internal {
@@ -139,22 +107,6 @@ library Utilities {
     returns(uint256 share) 
   {
     return (_commission * _tierCommission) / _totalTiersCommission;
-  }
-
-  /**
-  * @dev Updates the unused commission balance and campaign storage
-  * @notice Handles steps for when there is no referrer at a particular level
-  * @param _unusedCommissionBalance Remaining balance after commission distribution
-  * @param _campaign Current campaign data
-  */
-  function _updateUnusedCommissionBalance(
-    uint256 _unusedCommissionBalance, 
-    CampaignInfo memory _campaign
-  ) 
-    internal 
-  {
-    _campaign.nonCommissionBalance += _unusedCommissionBalance;
-    _updateCampaignStorage(_campaign);
   }
 
   function _updateCampaignStorage(CampaignInfo memory _campaign) internal {

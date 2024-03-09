@@ -138,7 +138,6 @@ contract CampaignFacet is ICampaignFacet {
   ) external onlyCampaign returns (bool){
     // emit new referee event
     emit NewReferee(_campaignId, _recipient, _affiliateAddress, _tokenId);
-    // CampaignInfo memory _campaign = getCampaignData(_campaignId);
     // create new referee data
     RefereeInfo memory _newReferee;
     _newReferee.campaignId = _campaignId;
@@ -148,13 +147,10 @@ contract CampaignFacet is ICampaignFacet {
     // update referee storage
     _updateRefereeStorage(_newReferee, _affiliateAddress);
     Utilities._addAffiliateReferee(_affiliateAddress, _campaignId, _recipient);
-    // update campaign's commission balance
-    // _campaign.commissionBalance += _commission;
-    // update _campaign in storage
-    // Utilities._updateCampaignStorage(_campaign);
+
     // update affiliates' commission balance
     (address levelTwoReferrerAddress, address levelThreeReferrerAddress) = Utilities._getMultiLevelReferrers(_affiliateAddress, _campaignId);
-    (uint256 levelOneShare, uint256 levelTwoShare, uint256 levelThreeShare) = Utilities._calculateAffiliatePayout(_commission, _affiliateAddress, _campaignId);
+    (uint256 levelOneShare, uint256 levelTwoShare, uint256 levelThreeShare) = Utilities._calculateAffiliatesPayout(_commission, _campaignId);
     AffiliateUplineData memory affiliateData = AffiliateUplineData({
       campaignId: _campaignId,
       affiliateId: _affiliateAddress,
@@ -164,6 +160,7 @@ contract CampaignFacet is ICampaignFacet {
     Utilities._updateAffiliateStorage( _tokenId, levelOneShare, _affiliateAddress, affiliateData);
     if(levelTwoReferrerAddress != address(0)) Utilities._updateAffiliateStorage(_tokenId, levelTwoShare,levelTwoReferrerAddress, affiliateData);
     if(levelThreeReferrerAddress != address(0)) Utilities._updateAffiliateStorage(_tokenId, levelThreeShare, levelThreeReferrerAddress, affiliateData);
+    Utilities._updateCampaignPayoutData(levelOneShare, levelTwoShare, levelThreeShare, affiliateData);
     return true;
   }
 

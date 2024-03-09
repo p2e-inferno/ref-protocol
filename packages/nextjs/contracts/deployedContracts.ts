@@ -7,8 +7,27 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   5: {
     AffiliateFacet: {
-      address: "0xBC2624A971EDd1c0DdcDfa31d0063CA7cedbB005",
+      address: "0x68346B9D08Cc199eb84c35FB56D3aF31649BE60f",
       abi: [
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "affiliate",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "campaignId",
+              type: "address",
+            },
+          ],
+          name: "NewAffiliate",
+          type: "event",
+        },
         {
           inputs: [],
           name: "allAffiliates",
@@ -17,6 +36,171 @@ const deployedContracts = {
               internalType: "address[]",
               name: "",
               type: "address[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_referrer",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "becomeAffiliate",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_affiliateId",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "getAffiliateDownlineSoldTokens",
+          outputs: [
+            {
+              internalType: "uint256[]",
+              name: "soldTokens",
+              type: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_affiliateId",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "getAffiliateInfo",
+          outputs: [
+            {
+              internalType: "address",
+              name: "campaignId",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "affiliateId",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "referrer",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "balance",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_affiliateId",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_tokenId",
+              type: "uint256",
+            },
+          ],
+          name: "getAffiliateSaleData",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "uint256",
+                  name: "commissionAmount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "date",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct SaleInfo",
+              name: "saleInfo",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_affiliateId",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "getAffiliateSoldTokens",
+          outputs: [
+            {
+              internalType: "uint256[]",
+              name: "soldTokens",
+              type: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "getCampaignAffiliatesCount",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "count",
+              type: "uint256",
             },
           ],
           stateMutability: "view",
@@ -35,75 +219,12 @@ const deployedContracts = {
               type: "address",
             },
           ],
-          name: "getAffiliate",
+          name: "getIsCampaignAffiliate",
           outputs: [
             {
-              components: [
-                {
-                  internalType: "address",
-                  name: "campaignId",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "affiliateId",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "referrer",
-                  type: "address",
-                },
-                {
-                  internalType: "uint256",
-                  name: "balance",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct AffiliateInfo",
+              internalType: "bool",
               name: "",
-              type: "tuple",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_campaignId",
-              type: "address",
-            },
-          ],
-          name: "getCampaignAffiliates",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "address",
-                  name: "campaignId",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "affiliateId",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "referrer",
-                  type: "address",
-                },
-                {
-                  internalType: "uint256",
-                  name: "balance",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct AffiliateInfo[]",
-              name: "",
-              type: "tuple[]",
+              type: "bool",
             },
           ],
           stateMutability: "view",
@@ -137,7 +258,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     CampaignFacet: {
-      address: "0xE16a5990C7479fF5cfe28D0c74378680553295a1",
+      address: "0xAd83B158C3910a4a56ed59E4255CF8c5d1F02dC2",
       abi: [
         {
           anonymous: false,
@@ -171,14 +292,39 @@ const deployedContracts = {
           type: "event",
         },
         {
+          anonymous: false,
           inputs: [
             {
+              indexed: true,
               internalType: "address",
-              name: "",
+              name: "campaignId",
               type: "address",
             },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "_buyer",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "address",
+              name: "referrer",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "tokenId",
+              type: "uint256",
+            },
           ],
-          name: "affiliateCampaigns",
+          name: "NewReferee",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "UNADUS",
           outputs: [
             {
               internalType: "address",
@@ -202,9 +348,24 @@ const deployedContracts = {
               type: "address",
             },
             {
-              internalType: "uint256[]",
-              name: "_affiliateCommission",
-              type: "uint256[]",
+              internalType: "uint256",
+              name: "_level1Commission",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_level2Commission",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_level3Commission",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_delay",
+              type: "uint256",
             },
           ],
           name: "createCampaign",
@@ -216,11 +377,11 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
-              name: "_lockAddress",
+              name: "_campaignId",
               type: "address",
             },
           ],
-          name: "getCampaign",
+          name: "getCampaignData",
           outputs: [
             {
               components: [
@@ -259,6 +420,72 @@ const deployedContracts = {
                   name: "nonCommissionBalance",
                   type: "uint256",
                 },
+                {
+                  internalType: "uint256",
+                  name: "delay",
+                  type: "uint256",
+                },
+              ],
+              internalType: "struct CampaignInfo",
+              name: "",
+              type: "tuple",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_lockAddress",
+              type: "address",
+            },
+          ],
+          name: "getCampaignForLock",
+          outputs: [
+            {
+              components: [
+                {
+                  internalType: "string",
+                  name: "name",
+                  type: "string",
+                },
+                {
+                  internalType: "address",
+                  name: "campaignId",
+                  type: "address",
+                },
+                {
+                  internalType: "address",
+                  name: "owner",
+                  type: "address",
+                },
+                {
+                  internalType: "address",
+                  name: "lockAddress",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256[]",
+                  name: "tiersCommission",
+                  type: "uint256[]",
+                },
+                {
+                  internalType: "uint256",
+                  name: "commissionBalance",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "nonCommissionBalance",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "delay",
+                  type: "uint256",
+                },
               ],
               internalType: "struct CampaignInfo",
               name: "",
@@ -281,11 +508,155 @@ const deployedContracts = {
           stateMutability: "pure",
           type: "function",
         },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_UNADUSAddress",
+              type: "address",
+            },
+          ],
+          name: "initUNADUS",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "lockToCampaignId",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_commission",
+              type: "uint256",
+            },
+          ],
+          name: "onNonReferredPurchase",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_tokenId",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_recipient",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_affiliateAddress",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_commission",
+              type: "uint256",
+            },
+          ],
+          name: "onReferredPurchase",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_newName",
+              type: "string",
+            },
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "setName",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_level1Commission",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_level2Commission",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_level3Commission",
+              type: "uint256",
+            },
+          ],
+          name: "setTiersCommission",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
       ],
-      inheritedFunctions: {},
+      inheritedFunctions: {
+        onNonReferredPurchase: "contracts/interfaces/ICampaignFacet.sol",
+        onReferredPurchase: "contracts/interfaces/ICampaignFacet.sol",
+      },
     },
     DiamondCutFacet: {
-      address: "0x46b18b7aB60706A3E4e2a5Ee55d71bB5d3D5512d",
+      address: "0x79Cdfb8F099ef09A36130b3F442e8F6521fE291F",
       abi: [
         {
           inputs: [
@@ -544,7 +915,7 @@ const deployedContracts = {
       },
     },
     DiamondLoupeFacet: {
-      address: "0x9A4cd93f3FeCAE8447b33eaa432Cb7b58ABfAfb0",
+      address: "0x7ED5c9c74628b51aF1C30Bd01Fd4Ff9fb2657b4E",
       abi: [
         {
           inputs: [
@@ -651,7 +1022,7 @@ const deployedContracts = {
       },
     },
     OwnershipFacet: {
-      address: "0xc8Ba3bE3F4C80F246bF0478e261c0B59cf8570e1",
+      address: "0xaB5E1bEd69cF87a65Dd4233D58B62B98D7408a04",
       abi: [
         {
           inputs: [
@@ -721,7 +1092,7 @@ const deployedContracts = {
       },
     },
     RefereeFacet: {
-      address: "0x6e484ECaf74F3ab033DAC6Abe70ddD6110161AdB",
+      address: "0xFB7B1cA9d0Fc1Ca369A7Bd0a432B292f7D4460b4",
       abi: [
         {
           inputs: [],
@@ -795,7 +1166,7 @@ const deployedContracts = {
               type: "address",
             },
           ],
-          name: "referralOf",
+          name: "referrerOf",
           outputs: [
             {
               internalType: "address",
@@ -809,8 +1180,151 @@ const deployedContracts = {
       ],
       inheritedFunctions: {},
     },
+    YourContract: {
+      address: "0x13BB699dF9cA5761Ceed8c806416e36b0bed4B86",
+      abi: [
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_owner",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "greetingSetter",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "string",
+              name: "newGreeting",
+              type: "string",
+            },
+            {
+              indexed: false,
+              internalType: "bool",
+              name: "premium",
+              type: "bool",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "value",
+              type: "uint256",
+            },
+          ],
+          name: "GreetingChange",
+          type: "event",
+        },
+        {
+          inputs: [],
+          name: "greeting",
+          outputs: [
+            {
+              internalType: "string",
+              name: "",
+              type: "string",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "owner",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "premium",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "string",
+              name: "_newGreeting",
+              type: "string",
+            },
+          ],
+          name: "setGreeting",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "totalCounter",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "userGreetingCounter",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "withdraw",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          stateMutability: "payable",
+          type: "receive",
+        },
+      ],
+      inheritedFunctions: {},
+    },
     YourDiamondContract: {
-      address: "0x193045daa08b34626Fd19BE04B9dEdfE3EBcd236",
+      address: "0xf0053878B46F49Cf586A46AbF48eA25F8b631944",
       abi: [
         {
           inputs: [
@@ -2553,7 +3067,7 @@ const deployedContracts = {
   },
   11155111: {
     AffiliateFacet: {
-      address: "0x58B6A43B342f7497414a89Ad7ac2f56F6fb102Fb",
+      address: "0x4Fd46c697011D4A7524241F5B97Bd8bA840f700A",
       abi: [
         {
           anonymous: false,
@@ -2804,7 +3318,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     CampaignFacet: {
-      address: "0x707bd33a2d51731B86A5ab8B6d2E316A58F2307E",
+      address: "0x3ec0770575F8119D2BF17097480e5C8D1297342D",
       abi: [
         {
           anonymous: false,
@@ -3202,7 +3716,7 @@ const deployedContracts = {
       },
     },
     DiamondCutFacet: {
-      address: "0x3D77Fd3Baa79fb3B06450743130a76AD08008Db6",
+      address: "0xAdF9682AF71c2bd5335ecA3FED97E2081E3d9c01",
       abi: [
         {
           inputs: [
@@ -3461,7 +3975,7 @@ const deployedContracts = {
       },
     },
     DiamondLoupeFacet: {
-      address: "0xd6D8608a7a96c0718D58a0Df1520276ad7b5b513",
+      address: "0x8b711842A2B3324Fb7e2B3Da7bE07B5ee118599a",
       abi: [
         {
           inputs: [
@@ -3568,7 +4082,7 @@ const deployedContracts = {
       },
     },
     OwnershipFacet: {
-      address: "0xBf9c40243AF06AD8bB71fC41EC204dF2ADC66556",
+      address: "0xea028d169F1f283b8C3ff64c9f8488f32ca452ae",
       abi: [
         {
           inputs: [
@@ -3638,7 +4152,7 @@ const deployedContracts = {
       },
     },
     RefereeFacet: {
-      address: "0x09afCe64B790c44A729Ad53d06193D38c06745a3",
+      address: "0x196214b226Ad5AB6A7e8C5d619EDEe085A483B9d",
       abi: [
         {
           inputs: [],
@@ -3727,7 +4241,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourContract: {
-      address: "0x9BF61e71200f502FAD878634dD04181FD476A8F1",
+      address: "0xFb35e3B5CD10d7A70210edb1D80a5B30CDdCc21C",
       abi: [
         {
           inputs: [
@@ -3870,7 +4384,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourDiamondContract: {
-      address: "0x4E639560526f4571095ce5096a1b2347D13bc3ab",
+      address: "0x3e447108A73b17486156f6e53fb95C010C2f169C",
       abi: [
         {
           inputs: [

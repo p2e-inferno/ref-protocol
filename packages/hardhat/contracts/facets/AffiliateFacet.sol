@@ -82,7 +82,6 @@ contract AffiliateFacet {
 			"Already an Affiliate in this Campaign"
 		);
 		
-
 		// set new affiliate data
         _addNewAffiliate(_campaignId, msg.sender, _referrer);
 		_setIsAffiliate(msg.sender, _campaignId, true);
