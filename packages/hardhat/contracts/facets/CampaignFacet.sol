@@ -10,6 +10,17 @@ import "../interfaces/IERC173.sol";
 import "../interfaces/ICampaignFacet.sol";
 import "../libraries/Utilities.sol";
 
+// TODO 
+// SET %fee on all non admin withdrawals
+// all campaigns list
+// Memberships/subscription
+// ----- set membership lock
+// ----- hasValidKey modifier
+// Withdrawals
+// ----- affiliateWithdrawal
+// ----- creatorWithdrawal
+// ----- adminWithdrawal
+
 // * allows new affiliate sign up
 /// @title CampaignFacet 
 /// @author Danny Thomx

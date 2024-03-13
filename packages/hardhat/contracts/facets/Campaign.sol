@@ -4,6 +4,8 @@ pragma solidity >=0.8.2 <0.9.0;
 import "@unlock-protocol/contracts/dist/PublicLock/IPublicLockV12.sol";
 import "../interfaces/ICampaignFacet.sol";
 
+// TODO - check if affiliateAddress is not an affiliate of the campaign, switch to nonReferred Purchase 
+
 /******************************************************
  * Purpose
  * deploy onKeyPurchase hook to track referrals for a lock

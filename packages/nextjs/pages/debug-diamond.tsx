@@ -33,7 +33,7 @@ const DebugDiamond: NextPage = () => {
 
   const checkout = async () => {
     const publicLockContract = new ethers.Contract(
-      "0xc1101345aeb844b0d16460fbeb6b3aded37b9b3d",
+      "0xA302B7f26f9687CF3edC1Eb3b210a28a3DDaD585",
       PublicLockV13.abi,
       signer,
     );
@@ -44,7 +44,7 @@ const DebugDiamond: NextPage = () => {
       [unadusAddress],
       [ethers.constants.AddressZero],
       // [[]],
-      [ethers.utils.defaultAbiCoder.encode(["address"], ["0x8Fa4BFbB396a76EbF79379c59f597867cf880Ac4"])],
+      [ethers.utils.defaultAbiCoder.encode(["address"], ["0xE11Cd5244DE68D90755a1d142Ab446A4D17cDC10"])],
     ];
     const options = {
       value: amount,
