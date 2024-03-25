@@ -21,7 +21,7 @@ struct CampaignStorage {
     mapping(address => mapping(address => CampaignInfo)) lockTocampaign;
     // maps a campaignId to a campaign
     mapping(address => CampaignInfo) campaignsById;
-    // Determines the withdrawal delay for each token sale in a campaign
+    // Tracks the withdrawal delay for each campaign
     mapping(address => uint) withdrawalDelay;
     CampaignInfo[] allCampaigns;
 }

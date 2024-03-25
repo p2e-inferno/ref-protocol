@@ -41,7 +41,7 @@ contract CampaignFacet is ICampaignFacet {
     _;
   }
 
-   modifier onlyCampaignOwner(address _campaignId) {
+  modifier onlyCampaignOwner(address _campaignId) {
     CampaignInfo memory _campaign = getCampaignData(_campaignId);
     require(_campaign.owner == msg.sender, "Not Campaign owner");
     _;
@@ -60,6 +60,52 @@ contract CampaignFacet is ICampaignFacet {
     isManager = IPublicLockV12(_lockAddress).isLockManager(msg.sender);
   }
 
+  function isMember(address _user)public view returns(bool _isMember){
+    address membershipLock = _getMembershipLock();
+    require(membershipLock != address(0), "UNADUS Membership Not Activated");
+    _isMember = IPublicLockV12(membershipLock).getHasValidKey(_user);
+  }
+
+  function getWithdrawalFee()public view returns(uint256 fee){
+    AppStorage storage s = LibAppStorage.diamondStorage();
+    fee = s.withdrawalFee;
+  }
+
+  function getMembershipLock()public view returns(address membershipLock){
+    membershipLock = _getMembershipLock();
+  }
+
+  function _getMembershipLock()internal view returns(address){
+    AppStorage storage s = LibAppStorage.diamondStorage();
+    return s.membershipLock;
+  }
+
+  function setMembershipLock(address _membershipLock) public onlyOwner(msg.sender){
+    AppStorage storage s = LibAppStorage.diamondStorage();
+    s.membershipLock = _membershipLock;
+  }
+
+  function setWithdrawalFee(uint256 _fee) public onlyOwner(msg.sender){
+    AppStorage storage s = LibAppStorage.diamondStorage();
+    s.withdrawalFee = _fee;
+  }
+
+  function withdraw()public onlyOwner(msg.sender) {
+
+  }
+  function affiliateWithdraw()public {
+    // reentrancy guard
+    // check if balance is enough
+    // check if available withdrawable balance after delay
+    // check if membership initialized
+    // check if isMember
+    
+  }
+
+  function creatorWithdraw()public {
+    
+  }
+
   function getCampaignForLock( address _lockAddress) external view returns (CampaignInfo memory) {
     CampaignStorage storage cs = LibCampaignStorage.diamondStorage();
     require(lockToCampaignId[_lockAddress] != address(0), "No campaign exist for this lock");
@@ -68,8 +114,7 @@ contract CampaignFacet is ICampaignFacet {
   }
 
   function getCampaignData(address _campaignId) public view returns (CampaignInfo memory){
-    CampaignStorage storage cs = LibCampaignStorage.diamondStorage();
-    return cs.campaignsById[_campaignId];
+    return Utilities._getCampaignData(_campaignId);
   }
   
   function getMaxTiers() external pure returns(uint){
