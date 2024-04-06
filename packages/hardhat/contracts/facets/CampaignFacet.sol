@@ -93,7 +93,7 @@ contract CampaignFacet is ICampaignFacet {
   function withdraw()public onlyOwner(msg.sender) {
 
   }
-  function affiliateWithdraw()public {
+  function affiliateWithdraw(uint256 _amount, address _campaignID)public {
     // reentrancy guard
     // check if balance is enough
     // check if available withdrawable balance after delay

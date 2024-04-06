@@ -23,6 +23,8 @@ struct CampaignStorage {
     mapping(address => CampaignInfo) campaignsById;
     // Tracks the withdrawal delay for each campaign
     mapping(address => uint) withdrawalDelay;
+    // Tracks whether the commission for a tokenId in specific campaign has been cashed out
+    mapping(address => mapping(uint => bool)) isCashedOutToken;
     CampaignInfo[] allCampaigns;
 }
 

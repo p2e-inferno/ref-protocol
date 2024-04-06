@@ -88,10 +88,12 @@ library Utilities {
     }
     return total;
   }
+
   function _getCampaignData(address _campaignId) internal view returns (CampaignInfo memory){
     CampaignStorage storage cs = LibCampaignStorage.diamondStorage();
     return cs.campaignsById[_campaignId];
   }
+
   /**
    * @dev Calculates the share for a particular commission tier
    * @notice Derives share by taking into account the commission and total commission from all tiers
@@ -112,6 +114,76 @@ library Utilities {
     return (_commission * _tierCommission) / _totalTiersCommission;
   }
 
+  function _fetchCreatorBalance(address _campaignId)view internal returns(uint256) {
+    CampaignInfo memory campaign = _getCampaignData(_campaignId);
+    return campaign.nonCommissionBalance;
+  }
+
+  function _calculateAffiliateWithdrawableBalance(address affiliateAddress, address campaignId) 
+    internal 
+    view 
+    returns (uint256 totalBalance, uint256[] memory, uint256[] memory ) 
+  {
+    (uint256 directSalesCommission, uint256[] memory directSalesTokenIds) = _estimateBalanceAndEligibleTokensForDirectSales(affiliateAddress, campaignId);
+    (uint256 referredSalesCommission, uint256[] memory refereesSalesTokenIds) = _estimateBalanceAndEligibleTokensForReferredSales(affiliateAddress, campaignId);
+    totalBalance = directSalesCommission + referredSalesCommission;
+    return (totalBalance, directSalesTokenIds, refereesSalesTokenIds);
+  }
+
+  function _estimateBalanceAndEligibleTokensForDirectSales(address affiliateAddress, address campaignId) 
+    internal 
+    view 
+    returns (uint256 balance, uint256[] memory eligibleTokenIds) 
+  {
+    return _calculateBalanceAndEligibleTokens(affiliateAddress, campaignId, true);
+  }
+
+  function _estimateBalanceAndEligibleTokensForReferredSales(address affiliateAddress, address campaignId) 
+    internal 
+    view 
+    returns (uint256 balance, uint256[] memory eligibleTokenIds) 
+  {
+    return _calculateBalanceAndEligibleTokens(affiliateAddress, campaignId, false);
+  }
+
+  function _calculateBalanceAndEligibleTokens(address _account, address _campaignId, bool isDirectSales) 
+    internal 
+    view 
+    returns(uint256, uint256[] memory) 
+  {
+    AffiliateStorage storage affiliateStorage = LibAffiliateStorage.diamondStorage();
+    AffiliateInfo storage affiliate = affiliateStorage.affiliateData[_account][_campaignId];
+    // Choose the correct array depending on isDirectSales
+    uint256[] memory tokensArray = isDirectSales ? affiliate.soldTokens : affiliate.refereesSoldTokens;
+    uint256 balance = 0;
+    uint256[] memory tokensToCashOut;
+    if(tokensArray.length > 0){
+      uint256 currentDate = block.timestamp;
+      for(uint256 i = 0; i < tokensArray.length; i++){
+        uint256 tokenId = tokensArray[i];
+        bool isCashedOut = _isCashedOutToken(tokenId, _campaignId);
+        SaleInfo memory saleInfo = affiliate.saleData[tokenId];
+        if(_isOverWithdrawalDelay(currentDate, saleInfo.date, _campaignId) && !isCashedOut) {
+          balance += saleInfo.commissionAmount;
+          tokensToCashOut[i] = tokenId;
+        }
+      }
+    }
+    return (balance, tokensToCashOut);
+  }
+
+  function _isCashedOutToken(uint256 _tokenId, address _campaignId)internal view returns (bool isCashedOut){
+    CampaignStorage storage _campaignStorage = LibCampaignStorage.diamondStorage();
+    isCashedOut = _campaignStorage.isCashedOutToken[_campaignId][_tokenId];
+  }
+
+  function _isOverWithdrawalDelay(uint256 _currentDate, uint256 _saleDate, address _campaignId) view internal returns(bool){
+    CampaignInfo memory campaign = _getCampaignData(_campaignId);
+    uint256 secondsInDay = 1 days;
+    uint256 withdrawalDelay = campaign.delay * secondsInDay;
+    return _currentDate > (_saleDate + withdrawalDelay);
+  }
+
   function _updateCampaignStorage(CampaignInfo memory _campaign) internal {
     CampaignStorage storage _campaignStorage = LibCampaignStorage.diamondStorage();
     // update lockTocampaign mapping
@@ -127,66 +199,6 @@ library Utilities {
     for (index = 0; index < allCampaigns.length; index++) {
         if(allCampaigns[index].campaignId == _campaign.campaignId) allCampaigns[index] = _campaign;
     }
-  }
-
-  function _calculateWithdrawableBalance(address _account, address _campaignId, bool _isAffiliate)internal view returns(uint256){
-    uint256 balance = 0;
-    if(_isAffiliate) {
-      uint256 directSalesCommision = _calculateAffiliateWithdrawableBalanceFromSales(_account, _campaignId);
-      uint256 refereesSalesCommission = _calculateAffiliateWithdrawableBalanceFromRefereesSales(_account, _campaignId);
-      balance = directSalesCommision + refereesSalesCommission;
-    } else {
-      balance = _getCreatorWithdrawableBalance(_campaignId);
-    }
-    return balance;
-  }
-
-  function _getCreatorWithdrawableBalance(address _campaignId)view internal returns(uint256) {
-    CampaignInfo memory campaign = _getCampaignData(_campaignId);
-    return campaign.nonCommissionBalance;
-  }
-
-  function _calculateAffiliateWithdrawableBalanceFromRefereesSales(address _account, address _campaignId)internal view returns(uint256){
-    AffiliateStorage storage affiliateStorage = LibAffiliateStorage.diamondStorage();
-    AffiliateInfo storage affiliate = affiliateStorage.affiliateData[_account][_campaignId];
-    uint256[] memory _refereesSoldTokens = affiliate.refereesSoldTokens; 
-    uint256 balance = 0;
-    if(_refereesSoldTokens.length > 0){
-      uint256 currentDate = block.timestamp;
-      for(uint256 i = 0; i < _refereesSoldTokens.length; i++){
-        uint256 tokenId = _refereesSoldTokens[i];
-        SaleInfo memory saleInfo = affiliate.saleData[tokenId];
-        if(_isOverWithdrawalDelay(currentDate, saleInfo.date, _campaignId)){
-          balance += saleInfo.commissionAmount;
-        }
-      }
-    }
-    return balance;
-  }
-
-  function _calculateAffiliateWithdrawableBalanceFromSales(address _account, address _campaignId)internal view returns(uint256){
-    AffiliateStorage storage affiliateStorage = LibAffiliateStorage.diamondStorage();
-    AffiliateInfo storage affiliate = affiliateStorage.affiliateData[_account][_campaignId];
-    uint256[] memory soldTokens = affiliate.soldTokens; 
-    uint256 balance = 0;
-    if(soldTokens.length > 0){
-      uint256 currentDate = block.timestamp;
-      for(uint256 i = 0; i < soldTokens.length; i++){
-        uint256 tokenId = soldTokens[i];
-        SaleInfo memory saleInfo = affiliate.saleData[tokenId];
-        if(_isOverWithdrawalDelay(currentDate, saleInfo.date, _campaignId)){
-          balance += saleInfo.commissionAmount;
-        }
-      }
-    }
-    return balance;
-  }
-
-  function _isOverWithdrawalDelay(uint256 _currentDate,uint256 _saleDate, address _campaignId)view internal returns(bool){
-    CampaignInfo memory campaign = _getCampaignData(_campaignId);
-    uint256 secondsInDay = 1 days;
-    uint256 withdrawalDelay = campaign.delay * secondsInDay;
-    return _currentDate > (_saleDate + withdrawalDelay);
   }
 
   /**
