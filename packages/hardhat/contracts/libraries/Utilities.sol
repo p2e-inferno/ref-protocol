@@ -165,12 +165,11 @@ library Utilities {
     uint256 balance = 0;
     uint256[] memory tokensToCashOut;
     if(tokensArray.length > 0){
-      uint256 currentDate = block.timestamp;
       for(uint256 i = 0; i < tokensArray.length; i++){
         uint256 tokenId = tokensArray[i];
         bool isCashedOut = _isCashedOutToken(tokenId, _campaignId);
         SaleInfo memory saleInfo = affiliate.saleData[tokenId];
-        if(_isOverWithdrawalDelay(currentDate, saleInfo.date, _campaignId) && isCashedOut == false) {
+        if(_isOverWithdrawalDelay(saleInfo.date, _campaignId) && isCashedOut == false) {
           balance += saleInfo.commissionAmount;
           tokensToCashOut[i] = tokenId;
         }
@@ -184,8 +183,9 @@ library Utilities {
     isCashedOut = _campaignStorage.isCashedOutToken[_campaignId][_tokenId];
   }
 
-  function _isOverWithdrawalDelay(uint256 _currentDate, uint256 _saleDate, address _campaignId) view internal returns(bool){
+  function _isOverWithdrawalDelay(uint256 _saleDate, address _campaignId) view internal returns(bool){
     CampaignInfo memory campaign = _getCampaignData(_campaignId);
+    uint256 _currentDate = block.timestamp;
     uint256 secondsInDay = 1 days;
     uint256 withdrawalDelay = campaign.delay * secondsInDay;
     return _currentDate > (_saleDate + withdrawalDelay);
