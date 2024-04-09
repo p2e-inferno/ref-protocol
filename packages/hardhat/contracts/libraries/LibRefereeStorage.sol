@@ -28,6 +28,4 @@ library LibRefereeStorage {
             ds.slot := storagePosition
         }
     }
-
-
 }

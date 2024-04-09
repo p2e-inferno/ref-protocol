@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../libraries/LibAppStorage.sol";
 import "../libraries/LibCampaignStorage.sol";
 import "../libraries/LibAffiliateStorage.sol";
@@ -11,22 +12,14 @@ import "../interfaces/ICampaignFacet.sol";
 import "../libraries/Utilities.sol";
 
 // TODO 
-// SET %fee on all non admin withdrawals
 // all campaigns list
-// Memberships/subscription
-// ----- set membership lock
-// ----- hasValidKey modifier
-// Withdrawals
-// ----- affiliateWithdrawal
-// ----- creatorWithdrawal
-// ----- adminWithdrawal
 
 // * allows new affiliate sign up
 /// @title CampaignFacet 
 /// @author Danny Thomx
 /// @notice Purpose: Create and Manage referral Campaigns for locks
 
-contract CampaignFacet is ICampaignFacet {
+contract CampaignFacet is ICampaignFacet, ReentrancyGuard {
   address public UNADUS;
 
   // mapping of lock address to campaign Ids
@@ -51,18 +44,10 @@ contract CampaignFacet is ICampaignFacet {
     require(isCampaign[msg.sender], "Only Campaign Hook Allowed");
     _;
   }
- 
-  function _isLockManager(address _lockAddress)
-    internal
-    view
-    returns (bool isManager)
-  {
-    isManager = IPublicLockV12(_lockAddress).isLockManager(msg.sender);
-  }
 
   function isMember(address _user)public view returns(bool _isMember){
     address membershipLock = _getMembershipLock();
-    require(membershipLock != address(0), "UNADUS Membership Not Activated");
+    if(membershipLock == address(0)) return false;
     _isMember = IPublicLockV12(membershipLock).getHasValidKey(_user);
   }
 
@@ -75,11 +60,6 @@ contract CampaignFacet is ICampaignFacet {
     membershipLock = _getMembershipLock();
   }
 
-  function _getMembershipLock()internal view returns(address){
-    AppStorage storage s = LibAppStorage.diamondStorage();
-    return s.membershipLock;
-  }
-
   function setMembershipLock(address _membershipLock) public onlyOwner(msg.sender){
     AppStorage storage s = LibAppStorage.diamondStorage();
     s.membershipLock = _membershipLock;
@@ -90,20 +70,78 @@ contract CampaignFacet is ICampaignFacet {
     s.withdrawalFee = _fee;
   }
 
-  function withdraw()public onlyOwner(msg.sender) {
-
+  function withdrawFees()public nonReentrant onlyOwner(msg.sender) {
+    AppStorage storage appStorage = LibAppStorage.diamondStorage();
+    uint256 amount = appStorage.feesBalance;
+    require(amount > 0, "Zero Fees balance");
+    // Send amount to owner address
+    (bool sent,) = msg.sender.call{value: amount}("");
+    require(sent, "Failed to send Ether");
+    // Deduct amount from fees balance
+    _updateWithdrawalFeeBalance(amount, false);
   }
-  function affiliateWithdraw(uint256 _amount, address _campaignID)public {
-    // reentrancy guard
-    // check if balance is enough
-    // check if available withdrawable balance after delay
-    // check if membership initialized
-    // check if isMember
-    
+
+  function affiliateWithdraw(uint256 _amount, address _campaignId) public nonReentrant {
+    AffiliateInfo storage affiliate = Utilities._getAffiliateData(_campaignId, msg.sender);
+    // check affiliate exists
+    require(affiliate.affiliateId != address(0), "Affiliate not found for Campaign Id");
+    // Ensure affiliate has enough balance
+    require(affiliate.balance >= _amount, "Insufficient balance: Affiliate total balance less than amount");
+    // Calculate withdrawable balance and check if it's sufficient
+    (uint256 withdrawableBalance, uint256[] memory directSalesTokenIds, uint256[] memory refereesSalesTokenIds) = Utilities._calculateAffiliateWithdrawableBalance(msg.sender, _campaignId);
+    require(_amount <= withdrawableBalance, "Insufficient balance: Withdrawable balance less than amount");
+    // Check for membership and transfer funds if applicable
+    if (isMember(msg.sender)) {
+      // Transfer funds to affiliate
+      (bool success,) = msg.sender.call{value: withdrawableBalance}("");
+      require(success, "Failed to send Ether");
+      // Deduct withdrawable balance from affiliate balance
+      _deductBalance(_campaignId, withdrawableBalance, true);
+      // Mark tokens as cashed out
+      _markAsCashedOutTokens(_campaignId, directSalesTokenIds, refereesSalesTokenIds);
+      // Exit after function execution
+      return;
+    }
+    // Calculate withdrawal fee
+    uint256 withdrawalFee = _calculateWithdrawalFee(withdrawableBalance);
+    // Deduct fee from withdrawable balance
+    uint256 amountAfterFees = withdrawableBalance - withdrawalFee;
+    // Send amountAfterFees to affiliate address
+    (bool sent,) = msg.sender.call{value: amountAfterFees}("");
+    require(sent, "Failed to send Ether");
+    // Update withdrawal fee balance
+    _updateWithdrawalFeeBalance(withdrawalFee, true);
+    // Deduct withdrawable balance from affiliate balance
+    _deductBalance(_campaignId, withdrawableBalance, true);
+    // Mark directSales and refereesSales tokenIds as cashed out
+    _markAsCashedOutTokens(_campaignId, directSalesTokenIds, refereesSalesTokenIds);
   }
 
-  function creatorWithdraw()public {
-    
+  function creatorWithdraw(uint256 _amount, address _campaignId)public nonReentrant onlyCampaignOwner(_campaignId){
+    // Fetch available balance and check if it's sufficient
+    uint256 availableBalance = Utilities._fetchCreatorBalance( _campaignId);
+    require(_amount <= availableBalance, "Insufficient balance: Withdrawable balance less than amount");
+    // Check for membership and transfer funds
+    if (isMember(msg.sender)) {
+      // Transfer funds to creator
+      (bool success,) = msg.sender.call{value: availableBalance}("");
+      require(success, "Failed to send Ether");
+      // Deduct availableBalance from creator balance
+      _deductBalance(_campaignId, availableBalance, false);
+      // Exit function execution
+      return;
+    }
+    // Calculate withdrawal fee
+    uint256 withdrawalFee = _calculateWithdrawalFee(availableBalance);
+    // Deduct fee from withdrawable balance
+    uint256 amountAfterFees = availableBalance - withdrawalFee;
+    // Send amountAfterFees to creator address
+    (bool sent,) = msg.sender.call{value: amountAfterFees}("");
+    require(sent, "Failed to send Ether");
+    // Deduct availableBalance from creator balance
+    _deductBalance(_campaignId, availableBalance, false);
+    // Update withdrawal fee balance
+    _updateWithdrawalFeeBalance(withdrawalFee, true);
   }
 
   function getCampaignForLock( address _lockAddress) external view returns (CampaignInfo memory) {
@@ -227,6 +265,61 @@ contract CampaignFacet is ICampaignFacet {
     // update _campaign in storage
     Utilities._updateCampaignStorage(_campaign);
     return true;
+  }
+
+  function _markAsCashedOutTokens(address _campaignId, uint[] memory _directSalesTokenIds, uint[] memory _refereesSalesTokenIds) private {
+    CampaignStorage storage campaignStorage = LibCampaignStorage.diamondStorage();
+
+    for (uint i=0; i<_directSalesTokenIds.length; i++) {
+      campaignStorage.isCashedOutToken[_campaignId][_directSalesTokenIds[i]] = true;
+    }
+
+    for (uint j=0; j< _refereesSalesTokenIds.length; j++) {
+      campaignStorage.isCashedOutToken[_campaignId][_refereesSalesTokenIds[j]] = true;
+    }
+  }
+
+  function _calculateWithdrawalFee(uint256 _amount) internal view returns (uint256 withdrawalFee) {
+    uint256 FEE_PERCENTAGE = getWithdrawalFee();
+    withdrawalFee = (_amount * FEE_PERCENTAGE) / 100;
+  }
+
+  function _getMembershipLock()internal view returns(address){
+    AppStorage storage s = LibAppStorage.diamondStorage();
+    return s.membershipLock;
+  }
+
+  function _isLockManager(address _lockAddress)
+    internal
+    view
+    returns (bool isManager)
+  {
+    isManager = IPublicLockV12(_lockAddress).isLockManager(msg.sender);
+  }
+
+  function _updateWithdrawalFeeBalance(uint256 _amount, bool isDeposit)private {
+    AppStorage storage _appStorage = LibAppStorage.diamondStorage();
+    isDeposit ? _appStorage.feesBalance += _amount : _appStorage.feesBalance -= _amount;
+  }
+
+  function _deductBalance(address _campaignId, uint256 _withdrawalAmount, bool _isAffiliate)private {
+    AffiliateInfo storage affiliate = Utilities._getAffiliateData(_campaignId, msg.sender);
+    CampaignInfo memory campaign = Utilities._getCampaignData(_campaignId);
+    // check if creator/ Affiliate
+    if(!_isAffiliate){
+      // If user creator (i.e not affiliate) deduct withdrawal amount from nonCommissionBalance for campaign
+      campaign.nonCommissionBalance -= _withdrawalAmount;
+      // update campaign storage
+      Utilities._updateCampaignStorage(campaign);
+
+      return;
+    }
+    // deduct withdrawal amount from affiliateBalance
+    affiliate.balance -= _withdrawalAmount;
+    // deduct withdrawal amount from commissionBalance for campaign
+    campaign.commissionBalance -= _withdrawalAmount;
+    // update campaign storage
+    Utilities._updateCampaignStorage(campaign);
   }
 
   function _updateRefereeStorage(RefereeInfo memory _referee, address _referrer) private {

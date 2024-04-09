@@ -94,6 +94,11 @@ library Utilities {
     return cs.campaignsById[_campaignId];
   }
 
+  function _getAffiliateData(address _campaignId, address _affiliateAddress) internal view returns (AffiliateInfo storage affiliate){
+    AffiliateStorage storage affiliateStorage = LibAffiliateStorage.diamondStorage();
+    return affiliate = affiliateStorage.affiliateData[_affiliateAddress][_campaignId];
+  }
+
   /**
    * @dev Calculates the share for a particular commission tier
    * @notice Derives share by taking into account the commission and total commission from all tiers
@@ -122,11 +127,13 @@ library Utilities {
   function _calculateAffiliateWithdrawableBalance(address affiliateAddress, address campaignId) 
     internal 
     view 
-    returns (uint256 totalBalance, uint256[] memory, uint256[] memory ) 
+    returns (uint256 totalBalance, uint256[] memory directSalesTokenIds, uint256[] memory refereesSalesTokenIds) 
   {
-    (uint256 directSalesCommission, uint256[] memory directSalesTokenIds) = _estimateBalanceAndEligibleTokensForDirectSales(affiliateAddress, campaignId);
-    (uint256 referredSalesCommission, uint256[] memory refereesSalesTokenIds) = _estimateBalanceAndEligibleTokensForReferredSales(affiliateAddress, campaignId);
+    (uint256 directSalesCommission, uint256[] memory _directSalesTokenIds) = _estimateBalanceAndEligibleTokensForDirectSales(affiliateAddress, campaignId);
+    (uint256 referredSalesCommission, uint256[] memory _refereesSalesTokenIds) = _estimateBalanceAndEligibleTokensForReferredSales(affiliateAddress, campaignId);
     totalBalance = directSalesCommission + referredSalesCommission;
+    directSalesTokenIds = _directSalesTokenIds;
+    refereesSalesTokenIds = _refereesSalesTokenIds;
     return (totalBalance, directSalesTokenIds, refereesSalesTokenIds);
   }
 
@@ -163,7 +170,7 @@ library Utilities {
         uint256 tokenId = tokensArray[i];
         bool isCashedOut = _isCashedOutToken(tokenId, _campaignId);
         SaleInfo memory saleInfo = affiliate.saleData[tokenId];
-        if(_isOverWithdrawalDelay(currentDate, saleInfo.date, _campaignId) && !isCashedOut) {
+        if(_isOverWithdrawalDelay(currentDate, saleInfo.date, _campaignId) && isCashedOut == false) {
           balance += saleInfo.commissionAmount;
           tokensToCashOut[i] = tokenId;
         }
