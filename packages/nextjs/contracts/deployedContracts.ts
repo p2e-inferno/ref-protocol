@@ -3067,7 +3067,7 @@ const deployedContracts = {
   },
   11155111: {
     AffiliateFacet: {
-      address: "0x4Fd46c697011D4A7524241F5B97Bd8bA840f700A",
+      address: "0x97dACE5Daac83D96EfEb58101137FD4AD6c2Bc9e",
       abi: [
         {
           anonymous: false,
@@ -3318,7 +3318,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     CampaignFacet: {
-      address: "0x3ec0770575F8119D2BF17097480e5C8D1297342D",
+      address: "0x6a2877c34Cdf7d3bCb308acED9783F4b238a41B3",
       abi: [
         {
           anonymous: false,
@@ -3398,6 +3398,24 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "affiliateWithdraw",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "string",
               name: "_name",
               type: "string",
@@ -3429,6 +3447,24 @@ const deployedContracts = {
             },
           ],
           name: "createCampaign",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_amount",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "creatorWithdraw",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -3569,6 +3605,32 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [],
+          name: "getMembershipLock",
+          outputs: [
+            {
+              internalType: "address",
+              name: "membershipLock",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getWithdrawalFee",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "fee",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [
             {
               internalType: "address",
@@ -3579,6 +3641,25 @@ const deployedContracts = {
           name: "initUNADUS",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_user",
+              type: "address",
+            },
+          ],
+          name: "isMember",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "_isMember",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -3666,6 +3747,19 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "address",
+              name: "_membershipLock",
+              type: "address",
+            },
+          ],
+          name: "setMembershipLock",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "string",
               name: "_newName",
               type: "string",
@@ -3709,6 +3803,26 @@ const deployedContracts = {
           stateMutability: "nonpayable",
           type: "function",
         },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_feePercentage",
+              type: "uint256",
+            },
+          ],
+          name: "setWithdrawalFee",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "withdrawFees",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
       ],
       inheritedFunctions: {
         onNonReferredPurchase: "contracts/interfaces/ICampaignFacet.sol",
@@ -3716,7 +3830,7 @@ const deployedContracts = {
       },
     },
     DiamondCutFacet: {
-      address: "0xAdF9682AF71c2bd5335ecA3FED97E2081E3d9c01",
+      address: "0x554c84Bee76F2Ea076F3161F4a7db8051122c75F",
       abi: [
         {
           inputs: [
@@ -3975,7 +4089,7 @@ const deployedContracts = {
       },
     },
     DiamondLoupeFacet: {
-      address: "0x8b711842A2B3324Fb7e2B3Da7bE07B5ee118599a",
+      address: "0x307533e31be571e0cd018CA31c70eed4Dde6043e",
       abi: [
         {
           inputs: [
@@ -4082,7 +4196,7 @@ const deployedContracts = {
       },
     },
     OwnershipFacet: {
-      address: "0xea028d169F1f283b8C3ff64c9f8488f32ca452ae",
+      address: "0xa74a109Af82558983e7Bd131e520d54FA37A7cE6",
       abi: [
         {
           inputs: [
@@ -4152,7 +4266,7 @@ const deployedContracts = {
       },
     },
     RefereeFacet: {
-      address: "0x196214b226Ad5AB6A7e8C5d619EDEe085A483B9d",
+      address: "0x954D5c2A4988bbD2e85F321A26a4D173C84940B8",
       abi: [
         {
           inputs: [],
@@ -4241,7 +4355,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourContract: {
-      address: "0xFb35e3B5CD10d7A70210edb1D80a5B30CDdCc21C",
+      address: "0x0DA9D62477B8ADfAf1Aa0ce51CC2849882E8B034",
       abi: [
         {
           inputs: [
@@ -4384,7 +4498,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourDiamondContract: {
-      address: "0x3e447108A73b17486156f6e53fb95C010C2f169C",
+      address: "0x2Da6d40aAd2591Ebb10F385f366873B9f89977b7",
       abi: [
         {
           inputs: [

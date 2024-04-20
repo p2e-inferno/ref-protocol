@@ -40,6 +40,11 @@ contract CampaignFacet is ICampaignFacet, ReentrancyGuard {
     _;
   }
 
+  modifier onlyIfSufficientBalance(uint256 _amount) {
+    require(address(UNADUS).balance >= _amount, "Insufficient Contract balance");
+    _;
+  }
+
   modifier onlyCampaign () {
     require(isCampaign[msg.sender], "Only Campaign Hook Allowed");
     _;
@@ -51,29 +56,30 @@ contract CampaignFacet is ICampaignFacet, ReentrancyGuard {
     _isMember = IPublicLockV12(membershipLock).getHasValidKey(_user);
   }
 
-  function getWithdrawalFee()public view returns(uint256 fee){
-    AppStorage storage s = LibAppStorage.diamondStorage();
-    fee = s.withdrawalFee;
+  function getPercentageWithdrawalFee()public view returns(uint256 fee){
+    AppStorage storage appStorage = LibAppStorage.diamondStorage();
+    return fee = appStorage.withdrawalFee;
   }
 
   function getMembershipLock()public view returns(address membershipLock){
     membershipLock = _getMembershipLock();
   }
 
-  function setMembershipLock(address _membershipLock) public onlyOwner(msg.sender){
+  function setMembershipLock(address _membershipLock) public onlyOwner(UNADUS){
     AppStorage storage s = LibAppStorage.diamondStorage();
     s.membershipLock = _membershipLock;
   }
 
-  function setWithdrawalFee(uint256 _fee) public onlyOwner(msg.sender){
-    AppStorage storage s = LibAppStorage.diamondStorage();
-    s.withdrawalFee = _fee;
+  function setPercentageWithdrawalFee(uint256 _feePercentage) public onlyOwner(UNADUS){
+    AppStorage storage appStorage = LibAppStorage.diamondStorage();
+    appStorage.withdrawalFee = _feePercentage;
   }
 
-  function withdrawFees()public nonReentrant onlyOwner(msg.sender) {
+  function withdrawFees()public nonReentrant onlyOwner(UNADUS) {
     AppStorage storage appStorage = LibAppStorage.diamondStorage();
     uint256 amount = appStorage.feesBalance;
     require(amount > 0, "Zero Fees balance");
+    require(address(this).balance >= amount, "Insufficient Contract balance");
     // Send amount to owner address
     (bool sent,) = msg.sender.call{value: amount}("");
     require(sent, "Failed to send Ether");
@@ -81,7 +87,10 @@ contract CampaignFacet is ICampaignFacet, ReentrancyGuard {
     _updateWithdrawalFeeBalance(amount, false);
   }
 
-  function affiliateWithdraw(uint256 _amount, address _campaignId) public nonReentrant {
+  function affiliateWithdraw(uint256 _amount, address _campaignId) public 
+    nonReentrant 
+    onlyIfSufficientBalance(_amount) 
+  {
     AffiliateInfo storage affiliate = Utilities._getAffiliateData(_campaignId, msg.sender);
     // check affiliate exists
     require(affiliate.affiliateId != address(0), "Affiliate not found for Campaign Id");
@@ -117,7 +126,11 @@ contract CampaignFacet is ICampaignFacet, ReentrancyGuard {
     _markAsCashedOutTokens(_campaignId, directSalesTokenIds, refereesSalesTokenIds);
   }
 
-  function creatorWithdraw(uint256 _amount, address _campaignId)public nonReentrant onlyCampaignOwner(_campaignId){
+  function creatorWithdraw(uint256 _amount, address _campaignId) public 
+    nonReentrant 
+    onlyIfSufficientBalance(_amount) 
+    onlyCampaignOwner(_campaignId)
+  {
     // Fetch available balance and check if it's sufficient
     uint256 availableBalance = Utilities._fetchCreatorBalance( _campaignId);
     require(_amount <= availableBalance, "Insufficient balance: Withdrawable balance less than amount");
@@ -133,6 +146,7 @@ contract CampaignFacet is ICampaignFacet, ReentrancyGuard {
     }
     // Calculate withdrawal fee
     uint256 withdrawalFee = _calculateWithdrawalFee(availableBalance);
+    require(availableBalance >= withdrawalFee, "Balance less than withdrawal fees");
     // Deduct fee from withdrawable balance
     uint256 amountAfterFees = availableBalance - withdrawalFee;
     // Send amountAfterFees to creator address
@@ -160,6 +174,7 @@ contract CampaignFacet is ICampaignFacet, ReentrancyGuard {
   }
 
   function initUNADUS(address _UNADUSAddress) external onlyOwner(_UNADUSAddress) {
+    require(_UNADUSAddress != address(0), "Invalid Address: Zero address");
     UNADUS = _UNADUSAddress;
   }
 
@@ -280,7 +295,7 @@ contract CampaignFacet is ICampaignFacet, ReentrancyGuard {
   }
 
   function _calculateWithdrawalFee(uint256 _amount) internal view returns (uint256 withdrawalFee) {
-    uint256 FEE_PERCENTAGE = getWithdrawalFee();
+    uint256 FEE_PERCENTAGE = getPercentageWithdrawalFee();
     withdrawalFee = (_amount * FEE_PERCENTAGE) / 100;
   }
 
@@ -307,7 +322,7 @@ contract CampaignFacet is ICampaignFacet, ReentrancyGuard {
     CampaignInfo memory campaign = Utilities._getCampaignData(_campaignId);
     // check if creator/ Affiliate
     if(!_isAffiliate){
-      // If user creator (i.e not affiliate) deduct withdrawal amount from nonCommissionBalance for campaign
+      // If user is a creator (i.e not an affiliate) deduct withdrawal amount from nonCommissionBalance for the campaign
       campaign.nonCommissionBalance -= _withdrawalAmount;
       // update campaign storage
       Utilities._updateCampaignStorage(campaign);

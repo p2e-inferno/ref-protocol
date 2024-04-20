@@ -29,11 +29,11 @@ const DebugDiamond: NextPage = () => {
   const { address } = useAccount();
 
   const signer = useEthersSigner();
-  const unadusAddress = "0x3e447108A73b17486156f6e53fb95C010C2f169C";
+  const unadusAddress = "0x2Da6d40aAd2591Ebb10F385f366873B9f89977b7";
 
   const checkout = async () => {
     const publicLockContract = new ethers.Contract(
-      "0xA302B7f26f9687CF3edC1Eb3b210a28a3DDaD585",
+      "0x49d9d5da131dcf47900590a4beebbc939fb89f4a",
       PublicLockV13.abi,
       signer,
     );
@@ -44,7 +44,8 @@ const DebugDiamond: NextPage = () => {
       [unadusAddress],
       [ethers.constants.AddressZero],
       // [[]],
-      [ethers.utils.defaultAbiCoder.encode(["address"], ["0xE11Cd5244DE68D90755a1d142Ab446A4D17cDC10"])],
+      // [ethers.utils.defaultAbiCoder.encode(["address"], ["0xE11Cd5244DE68D90755a1d142Ab446A4D17cDC10"])],
+      [ethers.utils.defaultAbiCoder.encode(["address"], [ethers.constants.AddressZero])],
     ];
     const options = {
       value: amount,
@@ -60,7 +61,7 @@ const DebugDiamond: NextPage = () => {
       const campaignContract = new ethers.Contract(unadusAddress, affiliateAbi, signer);
       const tx = await campaignContract.becomeAffiliate(
         "0x0000000000000000000000000000000000000000",
-        "0x7Ee64C5eF243F755c52a14e72fa7e46043008D8e",
+        "0xdEa5D8B7e61Fe4A5E9A2D64F0cD8cB8E01a429d8",
       );
       console.log("txX::becomeAffiliate", tx);
     } catch (e) {
