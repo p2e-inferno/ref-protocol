@@ -13,6 +13,10 @@ import "../libraries/Utilities.sol";
 
 // TODO 
 // all campaigns list
+// view fees balance
+// view withdrawable balance
+// set delay for campaign
+// add more events: 7
 
 // * allows new affiliate sign up
 /// @title CampaignFacet 
@@ -102,10 +106,10 @@ contract CampaignFacet is ICampaignFacet, ReentrancyGuard {
     // Check for membership and transfer funds if applicable
     if (isMember(msg.sender)) {
       // Transfer funds to affiliate
-      (bool success,) = msg.sender.call{value: withdrawableBalance}("");
+      (bool success,) = msg.sender.call{value: _amount}("");
       require(success, "Failed to send Ether");
       // Deduct withdrawable balance from affiliate balance
-      _deductBalance(_campaignId, withdrawableBalance, true);
+      _deductBalance(_campaignId, _amount, true);
       // Mark tokens as cashed out
       _markAsCashedOutTokens(_campaignId, directSalesTokenIds, refereesSalesTokenIds);
       // Exit after function execution
@@ -114,14 +118,14 @@ contract CampaignFacet is ICampaignFacet, ReentrancyGuard {
     // Calculate withdrawal fee
     uint256 withdrawalFee = _calculateWithdrawalFee(withdrawableBalance);
     // Deduct fee from withdrawable balance
-    uint256 amountAfterFees = withdrawableBalance - withdrawalFee;
+    uint256 amountAfterFees = _amount - withdrawalFee;
     // Send amountAfterFees to affiliate address
     (bool sent,) = msg.sender.call{value: amountAfterFees}("");
     require(sent, "Failed to send Ether");
     // Update withdrawal fee balance
     _updateWithdrawalFeeBalance(withdrawalFee, true);
     // Deduct withdrawable balance from affiliate balance
-    _deductBalance(_campaignId, withdrawableBalance, true);
+    _deductBalance(_campaignId, _amount, true);
     // Mark directSales and refereesSales tokenIds as cashed out
     _markAsCashedOutTokens(_campaignId, directSalesTokenIds, refereesSalesTokenIds);
   }
@@ -137,23 +141,23 @@ contract CampaignFacet is ICampaignFacet, ReentrancyGuard {
     // Check for membership and transfer funds
     if (isMember(msg.sender)) {
       // Transfer funds to creator
-      (bool success,) = msg.sender.call{value: availableBalance}("");
+      (bool success,) = msg.sender.call{value: _amount}("");
       require(success, "Failed to send Ether");
       // Deduct availableBalance from creator balance
-      _deductBalance(_campaignId, availableBalance, false);
+      _deductBalance(_campaignId, _amount, false);
       // Exit function execution
       return;
     }
     // Calculate withdrawal fee
-    uint256 withdrawalFee = _calculateWithdrawalFee(availableBalance);
-    require(availableBalance >= withdrawalFee, "Balance less than withdrawal fees");
+    uint256 withdrawalFee = _calculateWithdrawalFee(_amount);
+    require(_amount >= withdrawalFee, "Balance less than withdrawal fees");
     // Deduct fee from withdrawable balance
-    uint256 amountAfterFees = availableBalance - withdrawalFee;
+    uint256 amountAfterFees = _amount - withdrawalFee;
     // Send amountAfterFees to creator address
     (bool sent,) = msg.sender.call{value: amountAfterFees}("");
     require(sent, "Failed to send Ether");
     // Deduct availableBalance from creator balance
-    _deductBalance(_campaignId, availableBalance, false);
+    _deductBalance(_campaignId, _amount, false);
     // Update withdrawal fee balance
     _updateWithdrawalFeeBalance(withdrawalFee, true);
   }

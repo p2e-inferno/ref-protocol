@@ -3318,7 +3318,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     CampaignFacet: {
-      address: "0x6a2877c34Cdf7d3bCb308acED9783F4b238a41B3",
+      address: "0x956Ae90D5d81cFeec283BcA933c63b66E2Ad3F90",
       abi: [
         {
           anonymous: false,
@@ -3619,7 +3619,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "getWithdrawalFee",
+          name: "getPercentageWithdrawalFee",
           outputs: [
             {
               internalType: "uint256",
@@ -3778,6 +3778,19 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "uint256",
+              name: "_feePercentage",
+              type: "uint256",
+            },
+          ],
+          name: "setPercentageWithdrawalFee",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "address",
               name: "_campaignId",
               type: "address",
@@ -3799,19 +3812,6 @@ const deployedContracts = {
             },
           ],
           name: "setTiersCommission",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "_feePercentage",
-              type: "uint256",
-            },
-          ],
-          name: "setWithdrawalFee",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -4498,7 +4498,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourDiamondContract: {
-      address: "0x2Da6d40aAd2591Ebb10F385f366873B9f89977b7",
+      address: "0x5B49842B3c5e84E0E3B63109e10D513404B20452",
       abi: [
         {
           inputs: [

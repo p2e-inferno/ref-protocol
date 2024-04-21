@@ -6,10 +6,10 @@ import "./LibCampaignStorage.sol";
 import "./LibRefereeStorage.sol";
 
 struct AffiliateUplineData {
-    address campaignId;
-    address affiliateId;
-    address levelTwoReferrer;
-    address levelThreeReferrer;
+  address campaignId;
+  address affiliateId;
+  address levelTwoReferrer;
+  address levelThreeReferrer;
 }
 
 library Utilities {
@@ -163,13 +163,13 @@ library Utilities {
     // Choose the correct array depending on isDirectSales
     uint256[] memory tokensArray = isDirectSales ? affiliate.soldTokens : affiliate.refereesSoldTokens;
     uint256 balance = 0;
-    uint256[] memory tokensToCashOut;
+    uint256[] memory tokensToCashOut = new uint256[](tokensArray.length); // Initialize tokensToCashOut with the same length as tokensArray
     if(tokensArray.length > 0){
       for(uint256 i = 0; i < tokensArray.length; i++){
         uint256 tokenId = tokensArray[i];
         bool isCashedOut = _isCashedOutToken(tokenId, _campaignId);
         SaleInfo memory saleInfo = affiliate.saleData[tokenId];
-        if(_isOverWithdrawalDelay(saleInfo.date, _campaignId) && isCashedOut == false) {
+        if(_isOverWithdrawalDelay(saleInfo.date, _campaignId) && !isCashedOut) {
           balance += saleInfo.commissionAmount;
           tokensToCashOut[i] = tokenId;
         }
@@ -177,6 +177,7 @@ library Utilities {
     }
     return (balance, tokensToCashOut);
   }
+
 
   function _isCashedOutToken(uint256 _tokenId, address _campaignId)internal view returns (bool isCashedOut){
     CampaignStorage storage _campaignStorage = LibCampaignStorage.diamondStorage();
