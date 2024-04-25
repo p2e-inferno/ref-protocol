@@ -1,10 +1,14 @@
+import { WriteOnlyFunctionForm } from "../scaffold-eth/Contract/WriteOnlyFunctionForm";
 import { DiamondCut } from "./DiamondCut";
 import { DiamondFacets } from "./DiamondFacets";
 import { DiamondLoupe } from "./DiamondLoupe";
 import { DiamondOwnership } from "./DiamondOwnership";
+import { Abi } from "abitype";
 import { Spinner } from "~~/components/assets/Spinner";
+import { ReadOnlyFunctionForm } from "~~/components/scaffold-eth";
 import { Address, Balance } from "~~/components/scaffold-eth";
 import { useDeployedContractInfo, useNetworkColor } from "~~/hooks/scaffold-eth";
+import { useFacetFunctionsToDisplay } from "~~/hooks/scaffold-eth/useFacetFunctionsToDisplay";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
 
@@ -17,10 +21,12 @@ type DiamondContractUIProps = {
  * UI component to interface with deployed contracts.
  **/
 export const DiamondContractUI = ({ contractName, className = "" }: DiamondContractUIProps) => {
-  //   const [refreshDisplayVariables, triggerRefreshDisplayVariables] = useReducer(value => !value, false);
   const { targetNetwork } = useTargetNetwork();
   const { data: deployedContractData, isLoading: deployedContractLoading } = useDeployedContractInfo(contractName);
   const networkColor = useNetworkColor();
+  const { data: diamondContractData } = useDeployedContractInfo("YourDiamondContract");
+  const { writableFunctionsToDisplay } = useFacetFunctionsToDisplay("YourDiamondContract");
+  const { readableFunctionsToDisplay } = useFacetFunctionsToDisplay("YourDiamondContract");
 
   if (deployedContractLoading) {
     return (
@@ -63,6 +69,38 @@ export const DiamondContractUI = ({ contractName, className = "" }: DiamondContr
         </div>
         {contractName === "YourDiamondContract" || contractName.includes("DiamondContract") ? (
           <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
+            <div className="col-span-1 lg:col-span-2 flex flex-col gap-6">
+              <div className="z-10">
+                <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
+                  <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
+                    <div className="flex items-center justify-center space-x-2">
+                      <p className="my-0 text-xs">Diamond</p>
+                    </div>
+                  </div>
+                  <div className="p-5 divide-y divide-base-300">
+                    {writableFunctionsToDisplay.map(({ fn, inheritedFrom }, idx) => (
+                      <WriteOnlyFunctionForm
+                        abi={diamondContractData?.abi as Abi}
+                        key={`${fn.name}-${idx}}`}
+                        abiFunction={fn}
+                        onChange={() => console.log("ONCHANGE!!!")}
+                        contractAddress={diamondContractData?.address || ""}
+                        inheritedFrom={inheritedFrom}
+                      />
+                    ))}
+                    {readableFunctionsToDisplay.map(({ fn, inheritedFrom }) => (
+                      <ReadOnlyFunctionForm
+                        abi={diamondContractData?.abi as Abi}
+                        contractAddress={diamondContractData?.address || ""}
+                        abiFunction={fn}
+                        key={fn.name}
+                        inheritedFrom={inheritedFrom}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="z-10">
               <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-10 relative">
                 <div className="h-[5rem] w-[5.5rem] bg-base-300 absolute self-start rounded-[22px] -top-[38px] -left-[1px] -z-10 py-[0.65rem] shadow-lg shadow-base-300">
