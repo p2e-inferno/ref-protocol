@@ -2,11 +2,13 @@
 pragma solidity ^0.8.0;
 
 struct AppStorage {
-    uint256 feesBalance;
+    uint256 feesEthBalance;
+    mapping (address => uint) feesTokenBalance;
     uint256 withdrawalFee;
     address membershipLock;
     mapping(address => bool) isAffiliate;
     mapping(address => bool) isReferee;
+    address unadusAddress;
 }
 
 

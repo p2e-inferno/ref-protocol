@@ -98,6 +98,8 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     "RefereeFacet",
     "AffiliateFacet",
     "CampaignFacet",
+    "WithdrawalFacet",
+    "MembershipFacet",
   ];
   // The `facetCuts` variable is the FacetCut[] that contains the functions to add during diamond deployment
   const facetCuts = [];
@@ -205,7 +207,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     },
   ];
   const deployedDiamond = await hre.ethers.getContractAt(ownershipAbi, diamond.address, deployer);
-  const tx = await deployedDiamond.transferOwnership("0xE11Cd5244DE68D90755a1d142Ab446A4D17cDC10");
+  const tx = await deployedDiamond.transferOwnership("0x8Fa4BFbB396a76EbF79379c59f597867cf880Ac4");
   console.log("Transfered ownership: ", tx.hash);
 };
 

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-import "../libraries/LibRefereeStorage.sol";
-import "../libraries/LibAffiliateStorage.sol";
-import "../libraries/LibCampaignStorage.sol";
-import "../libraries/LibAppStorage.sol";
+import "../libraries/storage/LibRefereeStorage.sol";
+import "../libraries/storage/LibAffiliateStorage.sol";
+import "../libraries/storage/LibCampaignStorage.sol";
+import "../libraries/storage/LibAppStorage.sol";
 
 // @title UNADUS
 /// @author Dannt Thomx
@@ -35,12 +35,14 @@ contract AffiliateFacet {
 		return isCampaignAffiliate[_affiliate][_campaignId];
 	}
 
-	function getAffiliateInfo(address _affiliateId, address _campaignId) external view returns(address campaignId, address affiliateId, address referrer, uint256 balance) {
+	function getAffiliateInfo(address _affiliateId, address _campaignId, address _tokenAddress) external view returns(address campaignId, address affiliateId, address referrer, uint256 balance) {
 	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
+	    bool isTokenRequest = _tokenAddress != address(0);
         campaignId = _storage.affiliateData[_affiliateId][_campaignId].campaignId;
         affiliateId = _storage.affiliateData[_affiliateId][_campaignId].affiliateId;
         referrer = _storage.affiliateData[_affiliateId][_campaignId].referrer;
-        balance = _storage.affiliateData[_affiliateId][_campaignId].balance;
+        isTokenRequest ? balance = _storage.tokenBalance[_affiliateId][_tokenAddress] 
+			: balance = _storage.etherBalance[_affiliateId];
 	}
 
 	function getAffiliateSoldTokens(address _affiliateId, address _campaignId) external view returns(uint256[] memory soldTokens) {

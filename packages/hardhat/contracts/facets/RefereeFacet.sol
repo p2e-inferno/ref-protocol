@@ -1,31 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-// LibDiamond 💎 Allows For Diamond Storage
-import "../libraries/LibDiamond.sol";
-
-// LibRentalStorage 💎 Allows For Diamond Storage
-import "../libraries/LibRefereeStorage.sol";
-
-// LibAppStorage 📱 Allows For App Storage
-import "../libraries/LibAppStorage.sol";
-
-// Structs imported from AppStorage
-import "../libraries/LibCampaignStorage.sol";
-
-// Hardhat Console Debugging Easy
-import "hardhat/console.sol";
-
+import "../libraries/storage/LibRefereeStorage.sol";
 
 // @title UNADUS 
 /// @author Danny Thomx
 /// @notice
 /// @dev
 contract RefereeFacet {
-    // Using App Storage
-    AppStorage internal appStorage;
-    // RefereeStorage internal refereeStorage;
-
+  
     /// @notice This view function returns the rental status of NFT using tokenID
     /// @dev The tokenID is used to fetch rental details of the NFT from Diamond Storage
     /// @param _referee The tokenID of the NFT to fetch rental status

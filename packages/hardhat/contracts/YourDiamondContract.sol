@@ -13,6 +13,7 @@ import { IDiamondCut } from "./interfaces/IDiamondCut.sol";
 import { IDiamondLoupe } from "./interfaces/IDiamondLoupe.sol";
 import { IERC173 } from "./interfaces/IERC173.sol";
 import { IERC165 } from "./interfaces/IERC165.sol";
+import "./libraries/storage/LibAppStorage.sol";
 
 // When no function exists for function called
 error FunctionNotFound(bytes4 _functionSelector);
@@ -73,4 +74,15 @@ contract YourDiamondContract {
 	}
 
 	receive() external payable {}
+
+	function initializeUnadus() external {
+		require(IERC173(address(this)).owner() == msg.sender, "Not Owner");
+		AppStorage storage appStorage = LibAppStorage.diamondStorage();
+		appStorage.unadusAddress = address(this);
+	}
+
+	function getUnadusAddress() external view returns(address unadus) {
+		AppStorage storage appStorage = LibAppStorage.diamondStorage();
+		unadus = appStorage.unadusAddress;
+	}
 }

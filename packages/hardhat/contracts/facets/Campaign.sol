@@ -61,12 +61,21 @@ contract CampaignHook {
 
         // Determine if this was a referred or non-referred purchase
         bool isReferredPurchase = (_affiliateAddress != address(0) && _affiliateAddress != _recipient);
-        
+        address tokenAddress = IPublicLockV12(nftAddressForCampaign).tokenAddress();
         bool isDone;
         if (isReferredPurchase) {
-            isDone = ICampaignFacet(UNADUS).onReferredPurchase(campaignId, _tokenId, _recipient, _affiliateAddress, commission);
+            ReferredPurchaseData memory _purchaseData =  ReferredPurchaseData({
+                campaignId: campaignId,
+                tokenId: _tokenId,
+                recipient: _recipient,
+                affiliateAddress: _affiliateAddress,
+                commission: commission,
+                tokenAddress: tokenAddress
+            });
+
+            isDone = ICampaignFacet(UNADUS).onReferredPurchase(_purchaseData);
         } else {
-            isDone = ICampaignFacet(UNADUS).onNonReferredPurchase(campaignId, commission);
+            isDone = ICampaignFacet(UNADUS).onNonReferredPurchase(campaignId, commission, tokenAddress);
         }
         
         require(isDone, "Failed CampaignFacet call");
