@@ -35,14 +35,19 @@ contract AffiliateFacet {
 		return isCampaignAffiliate[_affiliate][_campaignId];
 	}
 
-	function getAffiliateInfo(address _affiliateId, address _campaignId, address _tokenAddress) external view returns(address campaignId, address affiliateId, address referrer, uint256 balance) {
+	function getAffiliateReferrer(address _affiliateId, address _campaignId) external view returns(address referrer) {
 	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
-	    bool isTokenRequest = _tokenAddress != address(0);
-        campaignId = _storage.affiliateData[_affiliateId][_campaignId].campaignId;
-        affiliateId = _storage.affiliateData[_affiliateId][_campaignId].affiliateId;
         referrer = _storage.affiliateData[_affiliateId][_campaignId].referrer;
-        isTokenRequest ? balance = _storage.tokenBalance[_affiliateId][_tokenAddress] 
-			: balance = _storage.etherBalance[_affiliateId];
+	}
+
+	function getAffiliateEthBalance(address _affiliateId)view external returns (uint256 balance) {
+	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
+		balance = _storage.etherBalance[_affiliateId];
+	}
+
+	function getAffiliateTokenBalance(address _affiliateId, address _tokenAddress) view external returns (uint256 balance) {
+	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
+ 		balance = _storage.tokenBalance[_affiliateId][_tokenAddress];
 	}
 
 	function getAffiliateSoldTokens(address _affiliateId, address _campaignId) external view returns(uint256[] memory soldTokens) {

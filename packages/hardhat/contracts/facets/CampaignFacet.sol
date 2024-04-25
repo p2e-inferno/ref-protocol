@@ -14,7 +14,7 @@ import "../interfaces/ICampaignFacet.sol";
 import "../libraries/Utilities.sol";
 import "../libraries/Modifiers.sol";
 
-// TODO
+// TODOs
 
 // * allows new affiliate sign up
 /// @title CampaignFacet
@@ -46,6 +46,38 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		);
 		address campaignId = campaignStorage.lockToCampaignId[_lockAddress];
 		return campaignStorage.campaignsById[campaignId];
+	}
+
+	function getCampaignCommissionBalance(
+		address _campaignId,
+		address _tokenAddress
+	) external view returns (uint256 balance) {
+		CampaignStorage storage campaignStorage = LibCampaignStorage.diamondStorage();
+		bool isTokenRequest = _tokenAddress != address(0);
+		return isTokenRequest ? campaignStorage.commissionTokenBalance[_campaignId][_tokenAddress]
+			: campaignStorage.commissionEtherBalance[_campaignId];
+	}
+
+	function getWithdrawalDelayForCampaign(address _campaignId) external view returns (uint256 delayInDays) {
+		CampaignStorage storage campaignStorage = LibCampaignStorage.diamondStorage();
+		delayInDays = campaignStorage.withdrawalDelay[_campaignId];
+	}
+
+	function getCampaignNonCommissionBalance(
+		address _campaignId,
+		address _tokenAddress
+	) external view returns (uint256 balance) {
+		CampaignStorage storage campaignStorage = LibCampaignStorage.diamondStorage();
+		bool isTokenRequest = _tokenAddress != address(0);
+		return isTokenRequest ? campaignStorage.nonCommissionTokenBalance[_campaignId][_tokenAddress]
+			: campaignStorage.nonCommissionEtherBalance[_campaignId];
+	}
+
+	function getIsCampaign(
+		address _campaignId
+	) external view returns (bool isCampaign) {
+		CampaignStorage storage campaignStorage = LibCampaignStorage.diamondStorage();
+		isCampaign = campaignStorage.isCampaign[_campaignId];
 	}
 
 	function getAllCampaigns() external view returns (CampaignInfo[] memory) {
@@ -97,8 +129,9 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		// update isCampaignHook mapping for new campaign
 		campaignStorage.isCampaign[address(newCampaignId)] = true;
 		campaignStorage.lockToCampaignId[_lockAddress] = address(newCampaignId);
+
 		// update campaign storage
-		CampaignHelpers._updateCampaignStorage(_newCampaign);
+		CampaignHelpers._addCampaign(_newCampaign, false);
 		// set lock referral commission for this campaign
 		uint256 totalCommission = CampaignHelpers._getTotalTiersCommission(
 			_newCampaign
@@ -135,7 +168,7 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		CampaignHelpers._updateCampaignStorage(_campaign);
 	}
 
-	function setDelay(
+	function setWithdrawalDelayForCampaign(
 		uint256 _delayInDays,
 		address _campaignId
 	) external onlyCampaignOwner(_campaignId) {

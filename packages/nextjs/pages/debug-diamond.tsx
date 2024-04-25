@@ -29,7 +29,7 @@ const DebugDiamond: NextPage = () => {
   const { address } = useAccount();
 
   const signer = useEthersSigner();
-  const unadusAddress = "0x5B49842B3c5e84E0E3B63109e10D513404B20452";
+  const unadusAddress = "0x7CB92B2a2185Bf62f7D97e81a1473b320B6126b2";
 
   const checkout = async () => {
     const publicLockContract = new ethers.Contract(
@@ -61,7 +61,7 @@ const DebugDiamond: NextPage = () => {
       const campaignContract = new ethers.Contract(unadusAddress, affiliateAbi, signer);
       const tx = await campaignContract.becomeAffiliate(
         "0x0000000000000000000000000000000000000000",
-        "0xe3be68055bbE3C1f1df30BA40ad6727900De8948",
+        "0xd4015c091a2c170801FCe6F782Df47d7c5867e59",
       );
       console.log("txX::becomeAffiliate", tx);
     } catch (e) {
