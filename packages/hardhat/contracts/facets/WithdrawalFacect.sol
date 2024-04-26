@@ -177,7 +177,7 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 			"Affiliate not found for Campaign Id"
 		);
         bool isTokenWithdrawal = _tokenAddress != address(0);
-        uint256 availableBalance = isTokenWithdrawal ? affiliateStorage.tokenBalance[msg.sender][_tokenAddress] : affiliateStorage.etherBalance[msg.sender];
+        uint256 availableBalance = isTokenWithdrawal ? affiliateStorage.affiliateBalance[msg.sender].tokenBalance[_campaignId][_tokenAddress] : affiliateStorage.affiliateBalance[msg.sender].etherBalance[_campaignId];
 		// check affiliate has enough balance
 		require(
 			availableBalance>= _amount,
@@ -262,7 +262,7 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		  return;
 		}
 		// deduct withdrawal amount from affiliateBalance
-		isTokenWithdrawal ? affiliateStorage.tokenBalance[msg.sender][_tokenAddress]-= _withdrawalAmount : affiliateStorage.etherBalance[msg.sender] -= _withdrawalAmount;
+		isTokenWithdrawal ? affiliateStorage.affiliateBalance[msg.sender].tokenBalance[_campaignId][_tokenAddress] -= _withdrawalAmount : affiliateStorage.affiliateBalance[msg.sender].etherBalance[_campaignId] -= _withdrawalAmount;
 		// deduct withdrawal amount from commissionBalance for campaign
 		isTokenWithdrawal ?  campaignStorage.commissionTokenBalance[_campaignId][_tokenAddress]  -= _withdrawalAmount :	campaignStorage.commissionEtherBalance[_campaignId] -= _withdrawalAmount;
 	}

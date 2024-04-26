@@ -3067,7 +3067,7 @@ const deployedContracts = {
   },
   11155111: {
     AffiliateFacet: {
-      address: "0xfC6Eb7ABC7b0e577e776adAD1FCc879081444A9B",
+      address: "0xB3347cB72d54d09Ce964B99C2Ce3C18fB351755d",
       abi: [
         {
           anonymous: false,
@@ -3150,8 +3150,13 @@ const deployedContracts = {
               name: "_affiliateId",
               type: "address",
             },
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
           ],
-          name: "getAffiliateEthBalance",
+          name: "getAffiliateEthBalanceForCampaign",
           outputs: [
             {
               internalType: "uint256",
@@ -3265,11 +3270,16 @@ const deployedContracts = {
             },
             {
               internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+            {
+              internalType: "address",
               name: "_tokenAddress",
               type: "address",
             },
           ],
-          name: "getAffiliateTokenBalance",
+          name: "getAffiliateTokenBalanceForCampaign",
           outputs: [
             {
               internalType: "uint256",
@@ -3351,7 +3361,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     CampaignFacet: {
-      address: "0x331821B266f53Eb37973d328317954885980a5Ae",
+      address: "0xA7bd1e1725B34B2f9443233b84709E445b8Ae7e1",
       abi: [
         {
           anonymous: false,
@@ -4216,7 +4226,7 @@ const deployedContracts = {
       },
     },
     MembershipFacet: {
-      address: "0x160abBbccb8906Df906f899A72DDC66D3e2c17CC",
+      address: "0x74178a4C5d53d8B888c030E08600dc7C5Cdc532d",
       abi: [
         {
           inputs: [],
@@ -4407,7 +4417,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     WithdrawalFacet: {
-      address: "0xf44D46a4E68084A1fb3b45ab56FfBb64Aef24B2c",
+      address: "0x1D44B61Fc07BDC9Be49e2cf9ac78B1ABc4bbE296",
       abi: [
         {
           anonymous: false,
@@ -4829,7 +4839,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourDiamondContract: {
-      address: "0x3E537946642a32C888F606323B8806246322b8e2",
+      address: "0x7bC6eaa9cDD64207B8F1721D8743F54fA9779d82",
       abi: [
         {
           inputs: [
