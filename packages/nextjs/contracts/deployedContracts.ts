@@ -3067,7 +3067,7 @@ const deployedContracts = {
   },
   11155111: {
     AffiliateFacet: {
-      address: "0x8997482f3514D0a407E232a9245985A334CD2A33",
+      address: "0xfC6Eb7ABC7b0e577e776adAD1FCc879081444A9B",
       abi: [
         {
           anonymous: false,
@@ -3150,38 +3150,37 @@ const deployedContracts = {
               name: "_affiliateId",
               type: "address",
             },
+          ],
+          name: "getAffiliateEthBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "balance",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_affiliateId",
+              type: "address",
+            },
             {
               internalType: "address",
               name: "_campaignId",
               type: "address",
             },
-            {
-              internalType: "address",
-              name: "_tokenAddress",
-              type: "address",
-            },
           ],
-          name: "getAffiliateInfo",
+          name: "getAffiliateReferrer",
           outputs: [
-            {
-              internalType: "address",
-              name: "campaignId",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "affiliateId",
-              type: "address",
-            },
             {
               internalType: "address",
               name: "referrer",
               type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "balance",
-              type: "uint256",
             },
           ],
           stateMutability: "view",
@@ -3261,6 +3260,30 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
+              name: "_affiliateId",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_tokenAddress",
+              type: "address",
+            },
+          ],
+          name: "getAffiliateTokenBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "balance",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
               name: "_campaignId",
               type: "address",
             },
@@ -3328,7 +3351,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     CampaignFacet: {
-      address: "0x22605a11aB8f999c1c867Af8bB66E9c3e7dBdE4c",
+      address: "0x8C252e8C68E1dA31726A39093D19f161965391C3",
       abi: [
         {
           anonymous: false,
@@ -3530,6 +3553,30 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_tokenAddress",
+              type: "address",
+            },
+          ],
+          name: "getCampaignCommissionBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "balance",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
               name: "_lockAddress",
               type: "address",
             },
@@ -3578,6 +3625,49 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_tokenAddress",
+              type: "address",
+            },
+          ],
+          name: "getCampaignNonCommissionBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "balance",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "getIsCampaign",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "isCampaign",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "getMaxTiers",
           outputs: [
@@ -3588,6 +3678,25 @@ const deployedContracts = {
             },
           ],
           stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "getWithdrawalDelayForCampaign",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "delayInDays",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -3673,24 +3782,6 @@ const deployedContracts = {
         {
           inputs: [
             {
-              internalType: "uint256",
-              name: "_delayInDays",
-              type: "uint256",
-            },
-            {
-              internalType: "address",
-              name: "_campaignId",
-              type: "address",
-            },
-          ],
-          name: "setDelay",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
               internalType: "string",
               name: "_newName",
               type: "string",
@@ -3730,6 +3821,24 @@ const deployedContracts = {
             },
           ],
           name: "setTiersCommission",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "_delayInDays",
+              type: "uint256",
+            },
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "setWithdrawalDelayForCampaign",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -4298,7 +4407,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     WithdrawalFacet: {
-      address: "0xE1F86F737C7198224c2A0BEd6943dfaE61080545",
+      address: "0xf44D46a4E68084A1fb3b45ab56FfBb64Aef24B2c",
       abi: [
         {
           anonymous: false,
@@ -4720,7 +4829,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourDiamondContract: {
-      address: "0x7CB92B2a2185Bf62f7D97e81a1473b320B6126b2",
+      address: "0x210A8FA3D2FdD7E239369561B55e71f7DCf5eB9C",
       abi: [
         {
           inputs: [

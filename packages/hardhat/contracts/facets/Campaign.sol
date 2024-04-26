@@ -57,7 +57,8 @@ contract CampaignHook {
         // calculate referrer commission for the lock
         uint256 commission = _calculateCampaignCommission(_referrer, _keyPrice);
         // decode affiliate's address from calldata
-        address _affiliateAddress = abi.decode(_data, (address));
+       
+        address _affiliateAddress = _data.length == 0 ? address(0) : abi.decode(_data, (address));
 
         // Determine if this was a referred or non-referred purchase
         bool isReferredPurchase = (_affiliateAddress != address(0) && _affiliateAddress != _recipient);
