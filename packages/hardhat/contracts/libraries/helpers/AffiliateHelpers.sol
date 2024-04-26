@@ -97,7 +97,8 @@ library AffiliateHelpers {
     affiliateStorage.affiliateData[_affiliateAddress][_campaignId].saleData[_tokenId].purchaseToken = _tokenAddress;
     affiliateStorage.affiliateData[_affiliateAddress][_campaignId].saleData[_tokenId].commissionAmount = _share;
     affiliateStorage.affiliateData[_affiliateAddress][_campaignId].saleData[_tokenId].date = block.timestamp;
-    isTokenPurchase ? affiliateStorage.tokenBalance[_affiliateAddress][_tokenAddress] += _share : affiliateStorage.etherBalance[_affiliateAddress] += _share;
+    isTokenPurchase ? affiliateStorage.affiliateBalance[_affiliateAddress].tokenBalance[_campaignId][_tokenAddress] += _share 
+      : affiliateStorage.affiliateBalance[_affiliateAddress].etherBalance[_campaignId] += _share;
     if(_affiliateAddress != _levelTwoReferrer && _affiliateAddress != _levelThreeReferrer) {
       affiliateStorage.affiliateData[_affiliateAddress][_campaignId].soldTokens.push(_tokenId);
     } else {

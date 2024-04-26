@@ -11,10 +11,16 @@ struct AffiliateInfo {
     address campaignId;
     address affiliateId;
     address referrer;
-    // uint256 balance; // Total affiliate's sales balance
     uint256[] soldTokens; // List of tokenIds of sold keys
     uint256[] refereesSoldTokens; // List of tokenIds of keys sold by referees
     mapping(uint256 => SaleInfo) saleData; // Mapping of tokenId to sales info
+}
+
+struct AffiliateBalance {
+    // campaignId => balance
+    mapping(address => uint256) etherBalance;
+    // campaignId => tokenAddress => balance
+    mapping(address => mapping(address => uint256)) tokenBalance;
 }
     
 
@@ -30,8 +36,10 @@ struct AffiliateStorage {
     * Maps affiliateId => campaignId => AffiliateInfo 
     **************************************************/
     mapping(address => mapping(address => AffiliateInfo)) affiliateData; 
-    mapping(address => uint256) etherBalance; // Total affiliate's sales balance in ETH
-    mapping(address => mapping(address => uint256)) tokenBalance; // Keeep track of affiliate's sales balance in tokens
+    // mapping(address => uint256) etherBalance; // Total affiliate's sales balance in ETH
+    // affiliateId => affiliateBalance
+    mapping(address => AffiliateBalance) affiliateBalance; // Total affiliate's sales balance in ETH
+    // mapping(address => mapping(address => uint256)) tokenBalance; // Keeep track of affiliate's sales balance in tokens
 }
 
 library LibAffiliateStorage {

@@ -3351,7 +3351,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     CampaignFacet: {
-      address: "0x8C252e8C68E1dA31726A39093D19f161965391C3",
+      address: "0x331821B266f53Eb37973d328317954885980a5Ae",
       abi: [
         {
           anonymous: false,
@@ -4829,7 +4829,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourDiamondContract: {
-      address: "0x210A8FA3D2FdD7E239369561B55e71f7DCf5eB9C",
+      address: "0x3E537946642a32C888F606323B8806246322b8e2",
       abi: [
         {
           inputs: [

@@ -40,14 +40,14 @@ contract AffiliateFacet {
         referrer = _storage.affiliateData[_affiliateId][_campaignId].referrer;
 	}
 
-	function getAffiliateEthBalance(address _affiliateId)view external returns (uint256 balance) {
+	function getAffiliateEthBalanceForCampaign(address _affiliateId, address _campaignId)view external returns (uint256 balance) {
 	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
-		balance = _storage.etherBalance[_affiliateId];
+		balance = _storage.affiliateBalance[_affiliateId].etherBalance[_campaignId];
 	}
 
-	function getAffiliateTokenBalance(address _affiliateId, address _tokenAddress) view external returns (uint256 balance) {
+	function getAffiliateTokenBalanceForCampaign(address _affiliateId, address _campaignId, address _tokenAddress) view external returns (uint256 balance) {
 	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
- 		balance = _storage.tokenBalance[_affiliateId][_tokenAddress];
+ 		balance = _storage.affiliateBalance[_affiliateId].tokenBalance[_campaignId][_tokenAddress];
 	}
 
 	function getAffiliateSoldTokens(address _affiliateId, address _campaignId) external view returns(uint256[] memory soldTokens) {
