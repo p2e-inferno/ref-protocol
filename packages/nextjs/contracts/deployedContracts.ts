@@ -3067,7 +3067,7 @@ const deployedContracts = {
   },
   11155111: {
     AffiliateFacet: {
-      address: "0xB3347cB72d54d09Ce964B99C2Ce3C18fB351755d",
+      address: "0xda8422cb78C84167799D83B9eFCdf6bC5fA19cA5",
       abi: [
         {
           anonymous: false,
@@ -3313,6 +3313,25 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+          ],
+          name: "getCampaingAffiliates",
+          outputs: [
+            {
+              internalType: "address[]",
+              name: "campaignAffiliates",
+              type: "address[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
               name: "_affiliate",
               type: "address",
             },
@@ -3361,7 +3380,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     CampaignFacet: {
-      address: "0xA7bd1e1725B34B2f9443233b84709E445b8Ae7e1",
+      address: "0x9e1904448B63B48D5358Ed3F319998709e1B9bDd",
       abi: [
         {
           anonymous: false,
@@ -4226,7 +4245,7 @@ const deployedContracts = {
       },
     },
     MembershipFacet: {
-      address: "0x74178a4C5d53d8B888c030E08600dc7C5Cdc532d",
+      address: "0xF55cdBd123458363F1c80042Ad7c6c7E2f0aC59F",
       abi: [
         {
           inputs: [],
@@ -4417,7 +4436,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     WithdrawalFacet: {
-      address: "0x1D44B61Fc07BDC9Be49e2cf9ac78B1ABc4bbE296",
+      address: "0x286641D1249cC85d0bE607D4aA54Bef44FF75FC1",
       abi: [
         {
           anonymous: false,
@@ -4592,6 +4611,59 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_account",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_tokenAddress",
+              type: "address",
+            },
+          ],
+          name: "getAffiliateWithdrawableBalanceForCampaign",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_campaignId",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "_tokenAddress",
+              type: "address",
+            },
+          ],
+          name: "getCreatorWithrawableBalanceForCampaign",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
               name: "_tokenAddress",
               type: "address",
             },
@@ -4614,40 +4686,6 @@ const deployedContracts = {
             {
               internalType: "uint256",
               name: "fee",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_campaignId",
-              type: "address",
-            },
-            {
-              internalType: "address",
-              name: "_account",
-              type: "address",
-            },
-            {
-              internalType: "bool",
-              name: "_isAffiliate",
-              type: "bool",
-            },
-            {
-              internalType: "address",
-              name: "_tokenAddress",
-              type: "address",
-            },
-          ],
-          name: "getWithdrawableBalance",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
               type: "uint256",
             },
           ],
@@ -4839,7 +4877,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourDiamondContract: {
-      address: "0x7bC6eaa9cDD64207B8F1721D8743F54fA9779d82",
+      address: "0xA68195FA3DC7b3ACf195212767d0EfbD3F15F03E",
       abi: [
         {
           inputs: [

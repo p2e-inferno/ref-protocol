@@ -114,15 +114,7 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		);
 		// check user is a lock manager
 		require(Utilities._isLockManager(_lockAddress), "Not Lock Manager");
-		// add unadus as lock manager
-		IPublicLockV12(_lockAddress).addLockManager(appStorage.unadusAddress);
-		// check unadus is a lock manager
-		require(IPublicLockV12(_lockAddress).isLockManager(appStorage.unadusAddress), "UNADUS:Failed to set lock manager");
-		// add CampaignFacet as lock manager
-		IPublicLockV12(_lockAddress).addLockManager(address(this));
-		// check CampaignFacet is a lock manager
-		require(IPublicLockV12(_lockAddress).isLockManager(address(this)), "CampaignFacet:Failed to set lock manager");
-
+	
 		CampaignInfo memory _newCampaign;
 		uint256[] memory tiersCommission = new uint256[](3);
 		tiersCommission[0] = _level1Commission;
