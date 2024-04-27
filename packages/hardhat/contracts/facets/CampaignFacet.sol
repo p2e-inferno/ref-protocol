@@ -105,12 +105,24 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 	) external {
 		AppStorage storage appStorage = LibAppStorage.diamondStorage();
 		CampaignStorage storage campaignStorage = LibCampaignStorage.diamondStorage();
+		// check unadus is initialized
         require(appStorage.unadusAddress != address(0), "UNADUS not initialized");
+		// check no campaign exists for this lock
 		require(
 			campaignStorage.lockToCampaignId[_lockAddress] == address(0),
 			"Campaign exist for this lock"
 		);
+		// check user is a lock manager
 		require(Utilities._isLockManager(_lockAddress), "Not Lock Manager");
+		// add unadus as lock manager
+		IPublicLockV12(_lockAddress).addLockManager(appStorage.unadusAddress);
+		// check unadus is a lock manager
+		require(IPublicLockV12(_lockAddress).isLockManager(appStorage.unadusAddress), "UNADUS:Failed to set lock manager");
+		// add CampaignFacet as lock manager
+		IPublicLockV12(_lockAddress).addLockManager(address(this));
+		// check CampaignFacet is a lock manager
+		require(IPublicLockV12(_lockAddress).isLockManager(address(this)), "CampaignFacet:Failed to set lock manager");
+
 		CampaignInfo memory _newCampaign;
 		uint256[] memory tiersCommission = new uint256[](3);
 		tiersCommission[0] = _level1Commission;
@@ -136,8 +148,9 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		uint256 totalCommission = CampaignHelpers._getTotalTiersCommission(
 			_newCampaign
 		);
+		// set referrer fee for the lock and unadus as the referrer address
 		IPublicLockV12(_lockAddress).setReferrerFee(appStorage.unadusAddress, totalCommission);
-		// set campaignId as onKeyPurchaseHook for the lock
+		// set CampaignHook as onKeyPurchaseHook for the lock
 		IPublicLockV12(_lockAddress).setEventHooks(
 			address(newCampaignId),
 			address(0),

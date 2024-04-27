@@ -17,29 +17,23 @@ struct AffiliateInfo {
 }
 
 struct AffiliateBalance {
-    // campaignId => balance
+    // campaignId => balance - Total affiliate's sales balance in ETH
     mapping(address => uint256) etherBalance;
-    // campaignId => tokenAddress => balance
+    // campaignId => tokenAddress => balance - Keeps track of affiliate's sales balance in tokens
     mapping(address => mapping(address => uint256)) tokenBalance;
 }
     
 
 struct AffiliateStorage {
-    // Tracks all affiliate.
-    address[] allAffiliates;
-    // Keeps track of all customers referred by an affiliate for a specific campaign.
-    mapping(address => mapping(address => address[])) refereesOf;
-    // Keeps track of all affilates of a campaign.
-    mapping(address => address[]) affiliatesOf;
+    address[] allAffiliates; // Tracks total affiliate across all campaigns.
+    mapping(address => mapping(address => address[])) refereesOf; // Keeps track of all customers referred by an affiliate for a specific campaign.
+    mapping(address => address[]) affiliatesOf; // Keeps track of all affilates of a campaign.
     /**************************************************
     * keeps track of data for a specific affiliate in a campaign
     * Maps affiliateId => campaignId => AffiliateInfo 
     **************************************************/
     mapping(address => mapping(address => AffiliateInfo)) affiliateData; 
-    // mapping(address => uint256) etherBalance; // Total affiliate's sales balance in ETH
-    // affiliateId => affiliateBalance
-    mapping(address => AffiliateBalance) affiliateBalance; // Total affiliate's sales balance in ETH
-    // mapping(address => mapping(address => uint256)) tokenBalance; // Keeep track of affiliate's sales balance in tokens
+    mapping(address => AffiliateBalance) affiliateBalance; // affiliateId => affiliateBalance - Total affiliate's sales balance in ETH
 }
 
 library LibAffiliateStorage {

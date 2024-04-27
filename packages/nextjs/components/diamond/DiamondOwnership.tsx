@@ -20,7 +20,7 @@ export const DiamondOwnership = ({ onChange }: { onChange: () => void }) => {
       {readableFunctionsToDisplay &&
         readableFunctionsToDisplay.map(({ fn, inheritedFrom }: any) => (
           <ReadOnlyFunctionForm
-            abi={diamondOwnership.abi as Abi}
+            abi={diamondOwnership?.abi as Abi}
             contractAddress={diamondContractData?.address || ""}
             abiFunction={fn}
             key={fn.name}

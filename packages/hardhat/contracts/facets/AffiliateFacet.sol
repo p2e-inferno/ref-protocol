@@ -14,6 +14,11 @@ contract AffiliateFacet {
 	mapping(address => mapping(address => bool)) isCampaignAffiliate;
 	event NewAffiliate(address indexed affiliate, address campaignId);
 
+	function getCampaingAffiliates(address _campaignId) external view returns (address[] memory campaignAffiliates) {
+		AffiliateStorage storage affiliateStorage = LibAffiliateStorage.diamondStorage();
+		campaignAffiliates = affiliateStorage.affiliatesOf[_campaignId];
+	}
+
 	function getRefereesOf(
 		address _affiliate,
 		address _campaignId
