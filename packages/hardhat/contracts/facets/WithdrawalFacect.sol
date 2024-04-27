@@ -49,18 +49,19 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
         return isTokenRequest ? _appStorage.feesTokenBalance[_tokenAddress] : _appStorage.feesEthBalance;
     }
 
-    function getWithdrawableBalance(address _campaignId, address _account, bool _isAffiliate, address _tokenAddress) external view returns(uint256) {
-        if(_isAffiliate) {
-            (uint256 withdrawableBalance,,) = WithdrawalHelpers._calculateAffiliateWithdrawableBalance(
-                _account,
-                _campaignId,
-                _tokenAddress
-            );
-            return withdrawableBalance;
-        }
+    function getAffiliateWithdrawableBalanceForCampaign(address _campaignId, address _account, address _tokenAddress) external view returns(uint256) {
+		(uint256 withdrawableBalance,,) = WithdrawalHelpers._calculateAffiliateWithdrawableBalance(
+			_account,
+			_campaignId,
+			_tokenAddress
+		);
+		return withdrawableBalance;
+    }
+
+	function getCreatorWithrawableBalanceForCampaign(address _campaignId, address _tokenAddress)external view returns(uint256){
 		uint256 availableBalance = WithdrawalHelpers._fetchCreatorBalance(_campaignId, _tokenAddress);
         return availableBalance;
-    }
+	}
 
 	function setPercentageWithdrawalFee(
 		uint256 _feePercentage
@@ -207,6 +208,7 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 			_deductBalance(_campaignId, _amount, true, _tokenAddress);
 			// Mark tokens as cashed out
 			_markAsCashedOutTokens(
+				msg.sender,
 				_campaignId,
 				directSalesTokenIds,
 				refereesSalesTokenIds
@@ -226,6 +228,7 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		_deductBalance(_campaignId, _amount, true, _tokenAddress);
 		// Mark directSales and refereesSales tokenIds as cashed out
 		_markAsCashedOutTokens(
+			msg.sender,
 			_campaignId,
 			directSalesTokenIds,
 			refereesSalesTokenIds
@@ -268,6 +271,7 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 	}
 
 	function _markAsCashedOutTokens(
+		address _affiliateId,
 		address _campaignId,
 		uint[] memory _directSalesTokenIds,
 		uint[] memory _refereesSalesTokenIds
@@ -276,13 +280,13 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 			.diamondStorage();
 
 		for (uint i = 0; i < _directSalesTokenIds.length; i++) {
-			campaignStorage.isCashedOutToken[_campaignId][
+			campaignStorage.cashedOutTokens[_campaignId].isCashedOutToken[_affiliateId][
 				_directSalesTokenIds[i]
 			] = true;
 		}
 
 		for (uint j = 0; j < _refereesSalesTokenIds.length; j++) {
-			campaignStorage.isCashedOutToken[_campaignId][
+			campaignStorage.cashedOutTokens[_campaignId].isCashedOutToken[_affiliateId][
 				_refereesSalesTokenIds[j]
 			] = true;
 		}

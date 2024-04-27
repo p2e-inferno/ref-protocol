@@ -10,11 +10,15 @@ struct CampaignInfo {
     uint256 delay;
 }
 
+struct CashedOutTokens {
+   mapping(address => mapping(uint => bool)) isCashedOutToken; //affiliateId => tokenId => isCashedOut
+}
+
 struct CampaignStorage {
     mapping(address => mapping(address => CampaignInfo)) lockTocampaign; // maps lock (address) to campaignId (address) for a specific campaign
     mapping(address => CampaignInfo) campaignsById; // maps a campaignId to a campaign
     mapping(address => uint) withdrawalDelay; // Tracks the withdrawal delay for each campaign
-    mapping(address => mapping(uint => bool)) isCashedOutToken; // Tracks whether the commission for a tokenId in specific campaign has been cashed out
+    mapping(address => CashedOutTokens) cashedOutTokens; // campaignId => CashOutData Tracks whether the affiliate's commission for a tokenId in specific campaign has been cashed out
     mapping(address => uint256) commissionEtherBalance;
     mapping(address => uint256) nonCommissionEtherBalance;
     mapping(address => mapping(address => uint256)) commissionTokenBalance;

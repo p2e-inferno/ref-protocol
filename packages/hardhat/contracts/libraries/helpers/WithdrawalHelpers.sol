@@ -114,7 +114,7 @@ library WithdrawalHelpers {
 		if (tokensArray.length > 0) {
 			for (uint256 i = 0; i < tokensArray.length; i++) {
 				uint256 tokenId = tokensArray[i];
-				bool isCashedOut = _isCashedOutToken(tokenId, _campaignId);
+				bool isCashedOut = _isCashedOutToken(_account, tokenId, _campaignId);
 				SaleInfo memory saleInfo = affiliate.saleData[tokenId];
 				if (
 					_isOverWithdrawalDelay(saleInfo.date, _campaignId) &&
@@ -130,12 +130,13 @@ library WithdrawalHelpers {
 	}
 
 	function _isCashedOutToken(
+		address _affiliateId,
 		uint256 _tokenId,
 		address _campaignId
 	) internal view returns (bool isCashedOut) {
 		CampaignStorage storage campaignStorage = LibCampaignStorage
 			.diamondStorage();
-		isCashedOut = campaignStorage.isCashedOutToken[_campaignId][_tokenId];
+		isCashedOut = campaignStorage.cashedOutTokens[_campaignId].isCashedOutToken[_affiliateId][_tokenId];
 	}
 
 	function _isOverWithdrawalDelay(
