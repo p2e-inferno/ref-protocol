@@ -43,6 +43,11 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		return fee = appStorage.withdrawalFee;
 	}
 
+
+	function getIsCashedOutToken(address _affiliateId, uint256 _tokenId, address _campaignId)external view returns(bool isCashedOut){
+		isCashedOut = WithdrawalHelpers._isCashedOutToken(_affiliateId, _tokenId, _campaignId);
+	}
+
     function getFeesBalance(address _tokenAddress) external view returns(uint256) {
 		AppStorage storage _appStorage = LibAppStorage.diamondStorage();
         bool isTokenRequest = _tokenAddress != address(0);
