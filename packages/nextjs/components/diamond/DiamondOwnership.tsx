@@ -30,7 +30,7 @@ export const DiamondOwnership = ({ onChange }: { onChange: () => void }) => {
       {writableFunctionsToDisplay &&
         writableFunctionsToDisplay.map(({ fn, inheritedFrom }: any, idx: number) => (
           <WriteOnlyFunctionForm
-            abi={diamondOwnership.abi as Abi}
+            abi={diamondOwnership?.abi as Abi}
             key={`${fn.name}-${idx}}`}
             abiFunction={fn}
             onChange={onChange}

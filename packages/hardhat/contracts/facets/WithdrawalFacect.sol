@@ -58,6 +58,10 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		return withdrawableBalance;
     }
 
+	function getAffiliateAvailableBalanceForCampaign(address _campaignId, address _account, address _tokenAddress) external view returns(uint256 availableBalance) {
+		availableBalance = WithdrawalHelpers._getAffiliateAvailableBalance(_campaignId, _account, _tokenAddress);   
+	}
+
 	function getCreatorWithrawableBalanceForCampaign(address _campaignId, address _tokenAddress)external view returns(uint256){
 		uint256 availableBalance = WithdrawalHelpers._fetchCreatorBalance(_campaignId, _tokenAddress);
         return availableBalance;
@@ -104,15 +108,15 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		emit CreatorWithdrawal(_campaignId, _amount, msg.sender, _tokenAddress);
     }
 
-    function affiliateEthWithdrawal(uint256 _amount, address _campaignId) external {
-        _affiliateWithdrawal(_amount, _campaignId, address(0));
-		emit AffiliateWithdrawal(_campaignId, _amount, msg.sender, address(0));
+    function affiliateEthWithdrawal(address _campaignId) external {
+       uint256 amount = _affiliateWithdrawal( _campaignId, address(0));
+		emit AffiliateWithdrawal(_campaignId, amount, msg.sender, address(0));
 
     }
 
-    function affiliateTokenWithdrawal(uint256 _amount, address _campaignId, address _tokenAddress) external onlySufficientTokenBalance(_amount, _tokenAddress) {
-        _affiliateWithdrawal(_amount, _campaignId, _tokenAddress);
-		emit AffiliateWithdrawal(_campaignId, _amount, msg.sender, _tokenAddress);
+    function affiliateTokenWithdrawal(address _campaignId, address _tokenAddress) external {
+       uint256 amount =  _affiliateWithdrawal(_campaignId, _tokenAddress);
+		emit AffiliateWithdrawal(_campaignId, amount, msg.sender, _tokenAddress);
     }
 
 	function _calculateWithdrawalFee(
@@ -163,26 +167,24 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 	}
 
 	function _affiliateWithdrawal(
-		uint256 _amount,
 		address _campaignId,
         address _tokenAddress
-	) internal nonReentrant {
+	) internal nonReentrant returns (uint256 withdrawalAmount){
 		AffiliateInfo storage affiliate = AffiliateHelpers._getAffiliateData(
 			_campaignId,
 			msg.sender
 		);
-        AffiliateStorage storage affiliateStorage = LibAffiliateStorage.diamondStorage();
 		// check affiliate exists
 		require(
 			affiliate.affiliateId != address(0),
 			"Affiliate not found for Campaign Id"
 		);
         bool isTokenWithdrawal = _tokenAddress != address(0);
-        uint256 availableBalance = isTokenWithdrawal ? affiliateStorage.affiliateBalance[msg.sender].tokenBalance[_campaignId][_tokenAddress] : affiliateStorage.affiliateBalance[msg.sender].etherBalance[_campaignId];
-		// check affiliate has enough balance
+        uint256 availableBalance = WithdrawalHelpers._getAffiliateAvailableBalance(_campaignId, msg.sender, _tokenAddress);
+		// check affiliate has available balance
 		require(
-			availableBalance>= _amount,
-			"Insufficient balance: Affiliate total balance less than amount"
+			availableBalance > 0,
+			"Insufficient balance: Zero (0) Affiliate available balance"
 		);
 		// Calculate withdrawable balance
 		(
@@ -194,18 +196,18 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 				_campaignId,
                 _tokenAddress
 			);
-		// check if withdrawable balance is sufficient
+		// check if withdrawable balance Validity
         require(
-			_amount <= withdrawableBalance,
-			"Insufficient balance: Withdrawable balance less than amount"
+			availableBalance >= withdrawableBalance,
+			"ERROR: Withdrawable balance > available balance"
 		);
 		// Check for membership and transfer funds if applicable
 		if (Utilities._isMember(msg.sender)) {
 			// Transfer funds to affiliate
-		    isTokenWithdrawal ? _transferToken(_tokenAddress, _amount) : _transferEth(payable(msg.sender), _amount);
+		    isTokenWithdrawal ? _transferToken(_tokenAddress, withdrawableBalance) : _transferEth(payable(msg.sender), withdrawableBalance);
 
 			// Deduct withdrawable balance from affiliate balance
-			_deductBalance(_campaignId, _amount, true, _tokenAddress);
+			_deductBalance(_campaignId, withdrawableBalance, true, _tokenAddress);
 			// Mark tokens as cashed out
 			_markAsCashedOutTokens(
 				msg.sender,
@@ -214,18 +216,19 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 				refereesSalesTokenIds
 			);
 			// Exit after function execution
-			return;
+			return withdrawableBalance;
 		}
+		// For Non members
 		// Calculate withdrawal fee
 		uint256 withdrawalFee = _calculateWithdrawalFee(withdrawableBalance);
 		// Deduct fee from withdrawable balance
-		uint256 amountAfterFees = _amount - withdrawalFee;
+		uint256 amountAfterFees = withdrawableBalance - withdrawalFee;
 		// Send amountAfterFees to affiliate address
 		isTokenWithdrawal ? _transferToken(_tokenAddress, amountAfterFees) : _transferEth(payable(msg.sender), amountAfterFees);
 		// Update withdrawal fee balance
 		_updateWithdrawalFeeBalance(withdrawalFee, true, _tokenAddress);
 		// Deduct withdrawable balance from affiliate balance
-		_deductBalance(_campaignId, _amount, true, _tokenAddress);
+		_deductBalance(_campaignId, withdrawableBalance, true, _tokenAddress);
 		// Mark directSales and refereesSales tokenIds as cashed out
 		_markAsCashedOutTokens(
 			msg.sender,
@@ -233,6 +236,7 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 			directSalesTokenIds,
 			refereesSalesTokenIds
 		);
+		return amountAfterFees;
 	}
 
 	function _updateWithdrawalFeeBalance(

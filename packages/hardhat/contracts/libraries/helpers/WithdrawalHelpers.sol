@@ -94,6 +94,12 @@ library WithdrawalHelpers {
 			);
 	}
 
+	function _getAffiliateAvailableBalance(address _campaignId, address _account, address _tokenAddress) internal view returns(uint256 availableBalance) {
+        AffiliateStorage storage affiliateStorage = LibAffiliateStorage.diamondStorage();
+	    bool isTokenWithdrawal = _tokenAddress != address(0);
+		availableBalance = isTokenWithdrawal ? affiliateStorage.affiliateBalance[_account].tokenBalance[_campaignId][_tokenAddress] : affiliateStorage.affiliateBalance[_account].etherBalance[_campaignId];
+    }
+
 	function _calculateBalanceAndEligibleTokens(
 		address _account,
 		address _campaignId,
