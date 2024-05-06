@@ -55,7 +55,6 @@ library Utilities {
 		AppStorage storage _appStorage = LibAppStorage.diamondStorage();
 		bool _isReferee = _appStorage.isReferee[_referee.id];
 		if (!_isReferee) {
-			_refereeStorage.allReferees.push(_referee.id);
 			_appStorage.isReferee[_referee.id] = true;
 		}
 	}

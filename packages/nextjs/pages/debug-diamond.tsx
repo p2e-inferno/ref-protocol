@@ -19,6 +19,7 @@ import { useEthersSigner } from "~~/utils/ethers";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
 import { getContractNames } from "~~/utils/scaffold-eth/contractNames";
 
+
 const selectedContractStorageKey = "scaffoldEth2.selectedContract";
 const contractNames = getContractNames();
 
@@ -31,13 +32,14 @@ const DebugDiamond: NextPage = () => {
   const { data: campaignFacetContract } = useDeployedContractInfo("CampaignFacet");
 
   const signer = useEthersSigner();
-  const unadusAddress = "0xA68195FA3DC7b3ACf195212767d0EfbD3F15F03E";
-  const currentCampaignId = "0x362D8c6A77f4B8bC5A6224122bc8ef4d5B20A4dd";
-  const currentLockAddress = "0x49d9d5da131dcf47900590a4beebbc939fb89f4a"; //0x49d9d5da131dcf47900590a4beebbc939fb89f4a :USDC | 0x924dDECF7b679765D8810e82d0A124eE4FbC31f5 :ETH
+  const unadusAddress = "0x71c284187D759e64bE7d0B98bc959c846E9aE38A";
+  const currentCampaignId = "0x4d439635950Cd38A4BEDf754990ce5912b361FE8";
+  const currentLockAddress = "0x924dDECF7b679765D8810e82d0A124eE4FbC31f5"; //0x49d9d5da131dcf47900590a4beebbc939fb89f4a :USDC | 0x924dDECF7b679765D8810e82d0A124eE4FbC31f5 :ETH | 0x4e6c4F1797633bcCBeD7a70648BC418a9EC65fBF :ETH
   const zeroAddress = "0x0000000000000000000000000000000000000000";
-  const currentReferrer = "0xE11Cd5244DE68D90755a1d142Ab446A4D17cDC10";
-  const currentCampaignName = "FERNO VIBES: Genesis";
+  const currentReferrer = "0x8fa4bfbb396a76ebf79379c59f597867cf880ac4"; //0xE11Cd5244DE68D90755a1d142Ab446A4D17cDC10 | 0x8fa4bfbb396a76ebf79379c59f597867cf880ac4 | 0xC1eA63E3596599d186D80F07A8099047Fa49A901
+  const currentCampaignName = "ETH Campaign"; // "TokenCampaign" | "ETH Campaign" | "MEMBERS Campaign"
   const tokenAddress = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238"; // USDC Sepolia
+  const membershipLockAddress = "0x4e6c4F1797633bcCBeD7a70648BC418a9EC65fBF";
   const BASIS_POINTS = 100;
   const tierOneReward = 10 * BASIS_POINTS;
   const tierTwoReward = 7 * BASIS_POINTS;
@@ -49,35 +51,50 @@ const DebugDiamond: NextPage = () => {
     if (campaignFacetAddress === zeroAddress) return "ADDRESS_ERR:: Invalid CampaignFacet address";
     try {
       const publicLockContract = new ethers.Contract(currentLockAddress, PublicLockV13.abi, signer);
-      const isCampaignFacetManager = publicLockContract.isLockManager(campaignFacetAddress);
-      const isUnadusManager = publicLockContract.isLockManager(unadusAddress);
-      if (!isUnadusManager) await publicLockContract.addLockManager(unadusAddress);
-      if (!isCampaignFacetManager) await publicLockContract.addLockManager(campaignFacetAddress);
-      const campaignContract = new ethers.Contract(unadusAddress, campaignAbi, signer);
-      // const params = {
-      //   currentCampaignName,
-      //   currentLockAddress,
-      //   tierOneReward,
-      //   tierTwoReward,
-      //   tierThreeReward,
-      //   withdrawalDelay,
-      // };
-      const tx = await campaignContract.createCampaign(
+      const isCampaignFacetManager = await publicLockContract.isLockManager(campaignFacetAddress);
+      const isUnadusManager = await publicLockContract.isLockManager(unadusAddress);
+      if (isUnadusManager === false) await publicLockContract.addLockManager(unadusAddress);
+      if (!isCampaignFacetManager === false) await publicLockContract.addLockManager(campaignFacetAddress);
+      const unadusCampaignFacetContract = new ethers.Contract(unadusAddress, campaignAbi, signer);
+      const params = [
         currentCampaignName,
         currentLockAddress,
         tierOneReward,
         tierTwoReward,
         tierThreeReward,
         withdrawalDelay,
-      );
-      console.log("txX::createCampaign", tx);
+      ];
+      const options = {
+        gasLimit: 3000000,
+      };
+      const tx = await unadusCampaignFacetContract.createCampaign(...params, options);
+      console.log("createCampaign", tx);
     } catch (e) {
       console.log("CREATECAMPAIGN_ERR::", e);
     }
   };
 
+  const subscribeMembership = async () => {
+    try {
+      const publicLockContract = new ethers.Contract(membershipLockAddress, PublicLockV13.abi, signer);
+      const hasValidMembership = await publicLockContract.getHasValidKey(address);
+      if (!hasValidMembership) {
+        const tx = await _checkout(membershipLockAddress, true);
+        console.log("Subscription::", tx);
+        return;
+      }
+      return console.log("Subscription:: Already a member :-)...");
+    } catch (e) {
+      console.log("SUBSCRIPTION_ERR::", e);
+    }
+  };
+
   const checkout = async () => {
-    const publicLockContract = new ethers.Contract(currentLockAddress, PublicLockV13.abi, signer);
+    await _checkout(currentLockAddress, false);
+  };
+
+  const _checkout = async (lockAddress: string, isMembership: boolean) => {
+    const publicLockContract = new ethers.Contract(lockAddress, PublicLockV13.abi, signer);
     const amount = await publicLockContract.keyPrice();
     const purchaseParams = [
       [amount],
@@ -87,7 +104,7 @@ const DebugDiamond: NextPage = () => {
       // [[]],
       // [ethers.utils.defaultAbiCoder.encode(["address"], ["0x8fa4bfbb396a76ebf79379c59f597867cf880ac4"])],
       // [ethers.utils.defaultAbiCoder.encode(["address"], ["0xC1eA63E3596599d186D80F07A8099047Fa49A901"])],
-      [ethers.utils.defaultAbiCoder.encode(["address"], [currentReferrer])],
+      [isMembership ? [] : ethers.utils.defaultAbiCoder.encode(["address"], [currentReferrer])],
       // [ethers.utils.defaultAbiCoder.encode(["address"], [ethers.constants.AddressZero])],
     ];
     const options = {
@@ -95,19 +112,17 @@ const DebugDiamond: NextPage = () => {
       gasLimit: 3000000,
     };
     const tx = await publicLockContract.purchase(...purchaseParams, options);
-    // const tx = await publicLockContract.purchase(...purchaseParams);
     console.log("txn::purchase", tx);
   };
 
   const erc20Contract = new ethers.Contract(tokenAddress, erc20ABI, signer);
-  // console.log("XX", erc20Contract);
 
   const tokenCheckout = async () => {
     const publicLockContract = new ethers.Contract(currentLockAddress, PublicLockV13.abi, signer);
     const amount = await publicLockContract.keyPrice();
     // approve token for transfer
-    // const txn = await erc20Contract.approve(currentLockAddress, amount);
     await erc20Contract.approve(currentLockAddress, amount);
+    // const txn = await erc20Contract.approve(currentLockAddress, amount);
     // await txn.wait();
     checkout();
   };
@@ -116,9 +131,9 @@ const DebugDiamond: NextPage = () => {
     try {
       const campaignContract = new ethers.Contract(unadusAddress, affiliateAbi, signer);
       const tx = await campaignContract.becomeAffiliate(zeroAddress, currentCampaignId);
-      console.log("txX::becomeAffiliate", tx);
+      console.log("becomeAffiliate", tx);
     } catch (e) {
-      console.log("AFFILIATE_ERR::", e);
+      console.log("BECOME_AFFILIATE_ERR::", e);
     }
   };
 
@@ -127,20 +142,24 @@ const DebugDiamond: NextPage = () => {
       const campaignContract = new ethers.Contract(unadusAddress, campaignAbi, signer);
       // const tx = await campaignContract.becomeAffiliate("0xca7632327567796e51920f6b16373e92c7823854");
       const tx = await campaignContract.setName(currentCampaignName);
-      console.log("txX::setName", tx);
+      console.log("setName:", tx);
     } catch (e) {
-      console.log("AFFILIATE_ERR::", e);
+      console.log("SET_NAME_ERR::", e);
     }
   };
 
   async function setTiersCommission() {
     try {
       const campaignContract = new ethers.Contract(unadusAddress, campaignAbi, signer);
-      // const tx = await campaignContract.becomeAffiliate("0xca7632327567796e51920f6b16373e92c7823854");
-      const tx = await campaignContract.setTiersCommission(currentCampaignId, 2000, 5000, 3000);
-      console.log("txX::setName", tx);
+      const tx = await campaignContract.setTiersCommission(
+        currentCampaignId,
+        tierOneReward,
+        tierTwoReward,
+        tierThreeReward,
+      );
+      console.log("setTiersCommission:", tx);
     } catch (e) {
-      console.log("AFFILIATE_ERR::", e);
+      console.log("SET_TIERS_ERR::", e);
     }
   }
 
@@ -189,7 +208,7 @@ const DebugDiamond: NextPage = () => {
         )}
       </div>
       <div className="text-center mt-8 bg-secondary p-10">
-        <div>
+        <div className="mb-3">
           <button onClick={becomeAffiliate} className="btn btn-sm">
             Become Affiliate
           </button>
@@ -207,6 +226,11 @@ const DebugDiamond: NextPage = () => {
           </button>
           <button onClick={tokenCheckout} className="btn btn-sm">
             Token Checkout
+          </button>
+        </div>
+        <div>
+          <button onClick={subscribeMembership} className="btn btn-sm">
+            Subscribe Membership
           </button>
         </div>
         <h1 className="text-4xl my-0">Debug Contracts</h1>

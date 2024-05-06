@@ -2,6 +2,7 @@
 pragma solidity ^0.8.1;
 
 import "../libraries/storage/LibRefereeStorage.sol";
+import "../libraries/storage/LibAppStorage.sol";
 
 // @title UNADUS 
 /// @author Danny Thomx
@@ -26,9 +27,9 @@ contract RefereeFacet {
       return _storage.refereeData[_referee][_campaignId];
     }
 
-    function getAllReferees()external view returns (address[] memory) {
-      RefereeStorage storage _storage = LibRefereeStorage.diamondStorage();
-      return _storage.allReferees;
+    function getIsReferee(address _account)external view returns (bool) {
+      AppStorage storage _storage = LibAppStorage.diamondStorage();
+      return _storage.isReferee[_account];
     }
 
 }

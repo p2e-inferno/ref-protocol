@@ -70,12 +70,6 @@ contract AffiliateFacet {
         saleInfo = _storage.affiliateData[_affiliateId][_campaignId].saleData[_tokenId];
 	}
 
-	function allAffiliates() external view returns (address[] memory) {
-		AffiliateStorage storage _storage = LibAffiliateStorage
-			.diamondStorage();
-		return _storage.allAffiliates;
-	}
-
 	function becomeAffiliate(address _referrer, address _campaignId) external {
 		CampaignStorage storage _storage = LibCampaignStorage.diamondStorage();
 		address campaignId = _storage.campaignsById[_campaignId].campaignId;
@@ -123,7 +117,6 @@ contract AffiliateFacet {
 		AppStorage storage _appStorage = LibAppStorage.diamondStorage();
 		bool _isAffiliate = _appStorage.isAffiliate[_affiliateId];
 		if (!_isAffiliate) {
-			_affiliateStorage.allAffiliates.push(_affiliateId);
 			_appStorage.isAffiliate[_affiliateId] = true;
 		}
 	}

@@ -80,11 +80,6 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		isCampaign = campaignStorage.isCampaign[_campaignId];
 	}
 
-	function getAllCampaigns() external view returns (CampaignInfo[] memory) {
-		CampaignStorage storage campaignStorage = LibCampaignStorage.diamondStorage();
-		return campaignStorage.allCampaigns;
-	}
-
 	function getCampaignById(
 		address _campaignId
 	) public view returns (CampaignInfo memory) {
@@ -134,8 +129,8 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		campaignStorage.isCampaign[address(newCampaignId)] = true;
 		campaignStorage.lockToCampaignId[_lockAddress] = address(newCampaignId);
 
-		// update campaign storage
-		CampaignHelpers._addCampaign(_newCampaign, false);
+		// add campaign to campaign storage
+		CampaignHelpers._addCampaign(_newCampaign);
 		// set lock referral commission for this campaign
 		uint256 totalCommission = CampaignHelpers._getTotalTiersCommission(
 			_newCampaign
@@ -178,7 +173,6 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		address _campaignId
 	) external onlyCampaignOwner(_campaignId) {
 		CampaignInfo memory _campaign = CampaignHelpers._getCampaignData(_campaignId);
-		require(_campaign.owner == msg.sender, "Not Campaign owner");
 		_campaign.delay = _delayInDays;
 		CampaignHelpers._updateCampaignStorage(_campaign);
 	}

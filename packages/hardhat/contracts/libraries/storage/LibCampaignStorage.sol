@@ -25,7 +25,6 @@ struct CampaignStorage {
     mapping(address => mapping(address => uint256)) nonCommissionTokenBalance;
     mapping(address => address) lockToCampaignId;
     mapping(address => bool) isCampaign;
-    CampaignInfo[] allCampaigns;
 }
 
 library LibCampaignStorage {

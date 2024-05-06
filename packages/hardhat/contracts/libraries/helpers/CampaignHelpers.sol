@@ -97,7 +97,7 @@ library CampaignHelpers {
 		return campaignStorage.campaignsById[_campaignId];
 	}
 
-	function _addCampaign(CampaignInfo memory _campaign, bool _isUpdateOperation)internal {
+	function _addCampaign(CampaignInfo memory _campaign)internal {
 		CampaignStorage storage campaignStorage = LibCampaignStorage
 			.diamondStorage();
 		// update lockTocampaign mapping
@@ -108,19 +108,9 @@ library CampaignHelpers {
 		campaignStorage.campaignsById[_campaign.campaignId] = _campaign;
 		// update withdrawal delay mapping
 		campaignStorage.withdrawalDelay[_campaign.campaignId] = _campaign.delay;
-		if(_isUpdateOperation){
-			CampaignInfo[] memory allCampaigns = campaignStorage.allCampaigns;
-			uint256 index;
-			for (index = 0; index < allCampaigns.length; index++) {
-				if (allCampaigns[index].campaignId == _campaign.campaignId)
-					allCampaigns[index] = _campaign;
-			}
-		}else {
-			campaignStorage.allCampaigns.push(_campaign);
-		}
 	}
 
 	function _updateCampaignStorage(CampaignInfo memory _campaign) internal {
-		_addCampaign(_campaign, true);
+		_addCampaign(_campaign);
 	}
 }

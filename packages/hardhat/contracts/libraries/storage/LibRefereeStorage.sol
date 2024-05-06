@@ -9,14 +9,8 @@ struct RefereeInfo {
 }
 
 struct RefereeStorage {
-    // keeps track of all referees for a campaign
-    // maps referee => campaignId => RefereeInfo
-    mapping(address => mapping(address =>  RefereeInfo)) refereeData;
-    // Keeps tracks who referred a customer for a specific campaign.
-    // maps referee => campaignId => referrer
-    mapping(address => mapping(address => address)) referrerOf;
-    // This tracks all referred customers
-    address[] allReferees;
+    mapping(address => mapping(address =>  RefereeInfo)) refereeData; // keeps track of all referees for a campaign: referee => campaignId => RefereeInfo
+    mapping(address => mapping(address => address)) referrerOf; // Keeps tracks who referred a customer for a specific campaign: referee => campaignId => referrer
 }
 
 library LibRefereeStorage {
