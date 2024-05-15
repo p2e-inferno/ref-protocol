@@ -7,7 +7,6 @@ import { Modifiers } from "../libraries/Modifiers.sol";
 // @title UNADUS: MembershipFacet
 /// @author Danny Thomx
 /// @notice Manages memberships
-/// @dev
 
 contract MembershipFacet is Modifiers {
 

@@ -7,7 +7,7 @@ import "../libraries/storage/LibAppStorage.sol";
 // @title UNADUS 
 /// @author Danny Thomx
 /// @notice
-/// @dev
+
 contract RefereeFacet {
   
     /// @notice This view function returns the rental status of NFT using tokenID

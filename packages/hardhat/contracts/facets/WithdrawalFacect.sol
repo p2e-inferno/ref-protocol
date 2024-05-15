@@ -14,7 +14,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 // @title UNADUS: WithdrawalFacet
 /// @author Danny Thomx
 /// @notice
-/// @dev
 
 contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 

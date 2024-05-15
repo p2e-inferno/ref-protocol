@@ -3067,7 +3067,7 @@ const deployedContracts = {
   },
   11155111: {
     AffiliateFacet: {
-      address: "0xda8422cb78C84167799D83B9eFCdf6bC5fA19cA5",
+      address: "0xb081CEe28681b15c908e6C4fd399C95cf7C3813d",
       abi: [
         {
           anonymous: false,
@@ -3087,19 +3087,6 @@ const deployedContracts = {
           ],
           name: "NewAffiliate",
           type: "event",
-        },
-        {
-          inputs: [],
-          name: "allAffiliates",
-          outputs: [
-            {
-              internalType: "address[]",
-              name: "",
-              type: "address[]",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
         },
         {
           inputs: [
@@ -3380,7 +3367,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     CampaignFacet: {
-      address: "0xBA597C752f3c905C3B361083Fe1B98B0c003a960",
+      address: "0x05651925453C051B6F767Bf9278fDabbbF36069C",
       abi: [
         {
           anonymous: false,
@@ -3480,51 +3467,6 @@ const deployedContracts = {
           name: "createCampaign",
           outputs: [],
           stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "getAllCampaigns",
-          outputs: [
-            {
-              components: [
-                {
-                  internalType: "string",
-                  name: "name",
-                  type: "string",
-                },
-                {
-                  internalType: "address",
-                  name: "campaignId",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "owner",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "lockAddress",
-                  type: "address",
-                },
-                {
-                  internalType: "uint256[]",
-                  name: "tiersCommission",
-                  type: "uint256[]",
-                },
-                {
-                  internalType: "uint256",
-                  name: "delay",
-                  type: "uint256",
-                },
-              ],
-              internalType: "struct CampaignInfo[]",
-              name: "",
-              type: "tuple[]",
-            },
-          ],
-          stateMutability: "view",
           type: "function",
         },
         {
@@ -4245,7 +4187,7 @@ const deployedContracts = {
       },
     },
     MembershipFacet: {
-      address: "0xF55cdBd123458363F1c80042Ad7c6c7E2f0aC59F",
+      address: "0x171875b713B92eEe8Fa87388a8dCAD91e5B294f8",
       abi: [
         {
           inputs: [],
@@ -4347,16 +4289,22 @@ const deployedContracts = {
       },
     },
     RefereeFacet: {
-      address: "0x58D35b29f4fD170690221966Ed3326C7AE19fA12",
+      address: "0xF8aE6c1F45EEC089576Fc644427Ff55CB81fFaA1",
       abi: [
         {
-          inputs: [],
-          name: "getAllReferees",
+          inputs: [
+            {
+              internalType: "address",
+              name: "_account",
+              type: "address",
+            },
+          ],
+          name: "getIsReferee",
           outputs: [
             {
-              internalType: "address[]",
+              internalType: "bool",
               name: "",
-              type: "address[]",
+              type: "bool",
             },
           ],
           stateMutability: "view",
@@ -4436,7 +4384,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     WithdrawalFacet: {
-      address: "0xFd77B1eD3fdC45b6335FCa996470Da82DaAe18fA",
+      address: "0x3a30DCCC0Bd485e1e3F504cf68B11F3B340fD681",
       abi: [
         {
           anonymous: false,
@@ -4925,7 +4873,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourDiamondContract: {
-      address: "0x71c284187D759e64bE7d0B98bc959c846E9aE38A",
+      address: "0xc613E87e0efc2369d375E5aa12b6267a7233adF4",
       abi: [
         {
           inputs: [
