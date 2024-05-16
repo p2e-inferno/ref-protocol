@@ -43,11 +43,23 @@ library AffiliateHelpers {
     return (levelOneShare, levelTwoShare, levelThreeShare);
   }
 
+  /**
+   * @dev Adds an affiliate's referee to the storage.
+   * @param _affiliateAddress Address of the affiliate
+   * @param _campaignId Id of the campaign
+   * @param _referee address of the referee
+   */
   function _addAffiliateReferee(address _affiliateAddress, address _campaignId, address _referee) internal {
     AffiliateStorage storage _affiliateStorage = LibAffiliateStorage.diamondStorage();
     _affiliateStorage.refereesOf[_affiliateAddress][_campaignId].push(_referee);
   }
 
+  /**
+   * @dev Gets affiliate data for a specific campaign.
+   * @param _campaignId Id of the campaign
+   * @param _affiliateAddress address of the affiliate
+   * @return affiliate Struct containing affiliate data
+   */
   function _getAffiliateData(address _campaignId, address _affiliateAddress) internal view returns (AffiliateInfo storage affiliate){
     AffiliateStorage storage affiliateStorage = LibAffiliateStorage.diamondStorage();
     return affiliate = affiliateStorage.affiliateData[_affiliateAddress][_campaignId];

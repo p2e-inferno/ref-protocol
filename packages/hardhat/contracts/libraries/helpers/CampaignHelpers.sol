@@ -7,7 +7,14 @@ import "../storage/LibRefereeStorage.sol";
 import "./AffiliateHelpers.sol";
 
 library CampaignHelpers {
-
+	/**
+   * @dev Updates the campaign's payout data after a sale.
+   * @param _tokenAddress Address of the token
+   * @param _l1Share Affiliate share for level 1 referral
+   * @param _l2Share Affiliate share for level 2 referral
+   * @param _l3Share Affiliate share for level 3 referral
+   * @param _affiliateData Struct containing affiliate's upline data
+   */
 	function _updateCampaignPayoutData(
 		address _tokenAddress,
 		uint256 _l1Share,
@@ -89,6 +96,11 @@ library CampaignHelpers {
 		return total;
 	}
 
+	/**
+	 * @dev Returns campaign data for a specific campaign.
+	 * @param _campaignId Id of the campaign
+	 * @return campaign Struct containing campaign data
+	 */
 	function _getCampaignData(
 		address _campaignId
 	) internal view returns (CampaignInfo memory) {
@@ -97,6 +109,10 @@ library CampaignHelpers {
 		return campaignStorage.campaignsById[_campaignId];
 	}
 
+	/**
+	 * @dev Adds a new campaign to the campaign storage.
+	 * @param _campaign Struct containing data of the new campaign
+	 */
 	function _addCampaign(CampaignInfo memory _campaign)internal {
 		CampaignStorage storage campaignStorage = LibCampaignStorage
 			.diamondStorage();
@@ -110,6 +126,10 @@ library CampaignHelpers {
 		campaignStorage.withdrawalDelay[_campaign.campaignId] = _campaign.delay;
 	}
 
+	/**
+	 * @dev Updates campaign storage with new campaign data.
+	 * @param _campaign Struct containing updated campaign data
+	 */
 	function _updateCampaignStorage(CampaignInfo memory _campaign) internal {
 		_addCampaign(_campaign);
 	}

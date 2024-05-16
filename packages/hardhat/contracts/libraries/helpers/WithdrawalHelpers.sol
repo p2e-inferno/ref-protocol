@@ -6,8 +6,18 @@ import "../storage/LibCampaignStorage.sol";
 import "../storage/LibRefereeStorage.sol";
 import { CampaignHelpers } from "./CampaignHelpers.sol";
 
+/**
+ * @title WithdrawalHelpers
+ * @dev Library for managing withdrawals.
+ */
 library WithdrawalHelpers {
-
+   
+   /**
+   * @dev Fetches the balance of a creator for a given campaign.
+   * @param _campaignId ID of the campaign.
+   * @param _tokenAddress Address of the token (zero address for ETH)
+   * @return returns the balance.
+   */
 	function _fetchCreatorBalance(
 		address _campaignId,
 		address _tokenAddress
@@ -23,6 +33,16 @@ library WithdrawalHelpers {
 				: campaignStorage.nonCommissionEtherBalance[_campaignId];
 	}
 
+
+	/**
+	 * @dev Calculates and returns the withdrawable balance of an affiliate.
+	 * @param affiliateAddress Address of affiliate
+	 * @param campaignId ID of the affiliate's campaign
+	 * @param _tokenAddress Address of token of the affiliate's campaign
+	 * @return totalBalance Total withdrawable balance
+	 * @return directSalesTokenIds IDs of tokens sold through direct sales
+	 * @return refereesSalesTokenIds IDs of tokens sold by referees
+	 */
 	function _calculateAffiliateWithdrawableBalance(
 		address affiliateAddress,
 		address campaignId,
@@ -58,6 +78,13 @@ library WithdrawalHelpers {
 		return (totalBalance, directSalesTokenIds, refereesSalesTokenIds);
 	}
 
+	/**
+	 * @dev It estimates the balance and eligible tokens for direct sales
+	 * @param affiliateAddress The address identifier for the affiliate
+	 * @param campaignId The address identifier for the campaign
+	 * @param _tokenAddress The address identifier for the token
+	 * @return balance and token IDs 
+	 */
 	function _estimateBalanceAndEligibleTokensForDirectSales(
 		address affiliateAddress,
 		address campaignId,
@@ -76,6 +103,14 @@ library WithdrawalHelpers {
 			);
 	}
 
+	/**
+	 * @dev Estimates the balance and eligible tokens for referred sales
+	 * @param affiliateAddress Address identifier for the affiliate
+	 * @param campaignId Address identifier for the campaign
+	 * @param _tokenAddress Address identifier for the token
+	 * @return balance Accumulated balance
+	 * @return eligibleTokenIds Token IDs eligible for the operation
+	 */
 	function _estimateBalanceAndEligibleTokensForReferredSales(
 		address affiliateAddress,
 		address campaignId,
@@ -93,13 +128,28 @@ library WithdrawalHelpers {
 				false
 			);
 	}
-
+	
+	/**
+	 * @dev Retrives the available balance for an affiliate in a campaign
+	 * @param _campaignId Address identifier for the specific campaign
+	 * @param _account Address identifier of the affiliate account
+	 * @param _tokenAddress Address identifier for the token
+	 * @return availableBalance Current available balance for an affiliate
+	 */
 	function _getAffiliateAvailableBalance(address _campaignId, address _account, address _tokenAddress) internal view returns(uint256 availableBalance) {
         AffiliateStorage storage affiliateStorage = LibAffiliateStorage.diamondStorage();
 	    bool isTokenWithdrawal = _tokenAddress != address(0);
 		availableBalance = isTokenWithdrawal ? affiliateStorage.affiliateBalance[_account].tokenBalance[_campaignId][_tokenAddress] : affiliateStorage.affiliateBalance[_account].etherBalance[_campaignId];
     }
 
+	/**
+	 * @dev Calculates the balance and eligible tokens for an affiliate for a specific campaign
+	 * @param _account Account address of the affiliate
+	 * @param _campaignId Address identifier for the campaign
+	 * @param _tokenAddress Address identifier for the token
+	 * @param isDirectSales Status of the sale - is it a direct sale or not
+	 * @return Accumulated balance and the array of token IDs
+	 */
 	function _calculateBalanceAndEligibleTokens(
 		address _account,
 		address _campaignId,
@@ -135,6 +185,13 @@ library WithdrawalHelpers {
 		return (balance, tokensToCashOut);
 	}
 
+	/**
+	 * @dev Checks if a token has been cashed out by an affiliate
+	 * @param _affiliateId Address identifier for the affiliate
+	 * @param _tokenId ID of the token to be checked
+	 * @param _campaignId Address identifier for the campaign
+	 * @return isCashedOut Status whether the token has been cashed out or not
+	 */
 	function _isCashedOutToken(
 		address _affiliateId,
 		uint256 _tokenId,
@@ -145,6 +202,12 @@ library WithdrawalHelpers {
 		isCashedOut = campaignStorage.cashedOutTokens[_campaignId].isCashedOutToken[_affiliateId][_tokenId];
 	}
 
+	/**
+	 * @dev Checks if a withdrawal is over the delay limit
+	 * @param _saleDate Date of the sale
+	 * @param _campaignId Address identifier for the campaign
+	 * @return Status whether the current date exceeds the delay limit or not
+	 */
 	function _isOverWithdrawalDelay(
 		uint256 _saleDate,
 		address _campaignId
