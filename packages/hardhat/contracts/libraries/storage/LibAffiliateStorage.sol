@@ -1,12 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+/**
+ * @title SaleInfo 
+ * @notice Contains information about each token sale.
+ */
 struct SaleInfo {
     address purchaseToken;
     uint256 commissionAmount;
     uint256 date;
 }
 
+/**
+ * @title Affiliate Info
+ * @notice Contains affiliated information such as referees, sold tokens and sale data for each affiliate for a campaign.
+ */
 struct AffiliateInfo {
     address campaignId;
     address affiliateId;
@@ -16,6 +24,10 @@ struct AffiliateInfo {
     mapping(uint256 => SaleInfo) saleData; // Mapping of tokenId to sales info
 }
 
+/**
+ * @title Affiliate Balance
+ * @notice Contains individual affiliate's balance information.
+ */
 struct AffiliateBalance {
     // campaignId => balance - Total affiliate's sales balance in ETH
     mapping(address => uint256) etherBalance;
@@ -23,14 +35,21 @@ struct AffiliateBalance {
     mapping(address => mapping(address => uint256)) tokenBalance;
 }
 
+/**
+ * @title Affiliate Storage
+ * @notice Stores all affiliate related data mappings and mappings to structs.
+ */
 struct AffiliateStorage {
-    // address[] allAffiliates; // Tracks total affiliate across all campaigns.
     mapping(address => mapping(address => address[])) refereesOf; // Keeps track of all customers referred by an affiliate for a specific campaign.
     mapping(address => address[]) affiliatesOf; // Keeps track of all affilates of a campaign.
     mapping(address => mapping(address => AffiliateInfo)) affiliateData; // affiliateData; keeps track of data for a specific affiliate in a campaign: affiliateId => campaignId => AffiliateInfo 
     mapping(address => AffiliateBalance) affiliateBalance; // affiliateId => affiliateBalance - Total affiliate's sales balance in ETH
 }
 
+/**
+ * @title Affiliate Storage Library
+ * @notice Contains function to define storage structure for Affiliate Storage.
+ */
 library LibAffiliateStorage {
     function diamondStorage() internal pure returns (AffiliateStorage storage ds) {
         // Specifies a random position from a hash of a string
@@ -40,5 +59,4 @@ library LibAffiliateStorage {
             ds.slot := storagePosition
         }
     }
-
 }
