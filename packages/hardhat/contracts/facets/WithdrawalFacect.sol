@@ -11,10 +11,11 @@ import { CampaignHelpers } from "../libraries/helpers/CampaignHelpers.sol";
 import { WithdrawalHelpers } from "../libraries/helpers/WithdrawalHelpers.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-// @title UNADUS: WithdrawalFacet
-/// @author Danny Thomx
-/// @notice
-
+/**
+ * @title UNADUS: WithdrawalFacet
+ * @author Danny Thomx
+ * @notice This contract handles all withdrawal operations in the system.
+ */
 contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 
 	event AffiliateWithdrawal(
@@ -37,22 +38,48 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		address _tokenAddress
 	);
 
+	/**
+     * @notice Get the fee charged when there is a withdrawal.
+     * @dev View function that is used to get the percentage fee levied on withdrawals.
+     * @return fee The percentage fee to be levied. 
+     */
 	function getPercentageWithdrawalFee() public view returns (uint256 fee) {
 		AppStorage storage appStorage = LibAppStorage.diamondStorage();
 		return fee = appStorage.withdrawalFee;
 	}
 
-
+	/**
+     * @notice Check the cash out status of a token for a particular affiliate and campaign.
+     * @dev View function to check if a given affiliate has already cashed out a token in a specific campaign.
+     * @param _affiliateId Unique identifier(address) of the affiliate.
+     * @param _tokenId Unique identifier of the token.
+     * @param _campaignId Unique identifier(address) of the campaign.
+     * @return isCashedOut Returns true if the token is already cashed out, otherwise false.
+     */
 	function getIsCashedOutToken(address _affiliateId, uint256 _tokenId, address _campaignId)external view returns(bool isCashedOut){
 		isCashedOut = WithdrawalHelpers._isCashedOutToken(_affiliateId, _tokenId, _campaignId);
 	}
 
+	/**
+     * @notice Get the total balance of fees in the specified token.
+     * @dev View function that retrieves the balance of fees in the specified token.
+     * @param _tokenAddress Address of the token.
+     * @return Total balance of fees in the specified token.
+     */
     function getFeesBalance(address _tokenAddress) external view returns(uint256) {
 		AppStorage storage _appStorage = LibAppStorage.diamondStorage();
         bool isTokenRequest = _tokenAddress != address(0);
         return isTokenRequest ? _appStorage.feesTokenBalance[_tokenAddress] : _appStorage.feesEthBalance;
     }
 
+	/**
+     * @notice Get the withdrawable balance of an affiliate for a specific campaign.
+     * @dev View function that gets the balance that an affiliate can currently withdraw from a specific campaign.
+     * @param _campaignId Unique identifier(address) of the campaign.
+     * @param _account Unique identifier(address) of the affiliate.
+     * @param _tokenAddress Address of the token.
+     * @return Withdrawable balance of the affiliate for the campaign in the specified token. 
+     */
     function getAffiliateWithdrawableBalanceForCampaign(address _campaignId, address _account, address _tokenAddress) external view returns(uint256) {
 		(uint256 withdrawableBalance,,) = WithdrawalHelpers._calculateAffiliateWithdrawableBalance(
 			_account,
@@ -62,15 +89,35 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		return withdrawableBalance;
     }
 
+	/**
+     * @notice Get the balance of an affiliate that is currently available for a specific campaign. 
+     * @dev View function that gets the balance of an affiliate that is currently available for withdrawal in a specific campaign.
+     * @param _campaignId Unique identifier(address) of the campaign.
+     * @param _account Unique identifier(address) of the affiliate.
+     * @param _tokenAddress Address of the token (zero address for ETH).
+     * @return  availableBalance balance of the affiliate that is currently available for withdrawal in the specific campaign and token. 
+     */
 	function getAffiliateAvailableBalanceForCampaign(address _campaignId, address _account, address _tokenAddress) external view returns(uint256 availableBalance) {
 		availableBalance = WithdrawalHelpers._getAffiliateAvailableBalance(_campaignId, _account, _tokenAddress);   
 	}
 
+	/**
+     * @notice Get the withdrawable balance of a campaign creator for a specific campaign.
+     * @dev View function that retrieves the balance that a campaign creator can currently withdraw from a specific campaign.
+     * @param _campaignId Unique identifier (address) of the campaign.
+     * @param _tokenAddress Address of the token.
+     * @return The withdrawable balance of the creator for the campaign in the specified token.
+     */
 	function getCreatorWithrawableBalanceForCampaign(address _campaignId, address _tokenAddress)external view returns(uint256){
 		uint256 availableBalance = WithdrawalHelpers._fetchCreatorBalance(_campaignId, _tokenAddress);
         return availableBalance;
 	}
 
+	/**
+     * @notice Set the percentage fee charged on withdrawals
+     * @dev Only the contract owner can call this function
+     * @param _feePercentage The percentage fee to be set, provided as an integer. For example, for a 1% fee, provide 100 to represent 1.00%
+     */
 	function setPercentageWithdrawalFee(
 		uint256 _feePercentage
 	) external onlyOwner {
@@ -78,6 +125,10 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		appStorage.withdrawalFee = _feePercentage;
 	}
 
+ 	/**
+     * @notice Allows the contract owner to withdraw all accumulated Ether fees from the contract
+     * @dev Can only be called by the owner of this contract.
+     */
 	function withdrawEthFees() external 
         nonReentrant 
         onlyOwner 
@@ -92,6 +143,12 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		emit FeesWithdrawal(amount, msg.sender, address(0));
 	}
 
+    /**
+     * @notice Allows the contract owner to withdraw a specific amount of accumulated token fees from the contract.
+     * @dev This function can only be called by the owner of this contract. Requires non-reentrant modifier to prevent re-entrancy attacks
+     * @param _amount The amount of token fees to withdraw
+     * @param _tokenAddress The address of the token
+     */
     function withdrawTokenFees(uint256 _amount, address _tokenAddress) external 
         nonReentrant 
         onlySufficientTokenBalance(_amount, _tokenAddress) 
@@ -102,27 +159,55 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		emit FeesWithdrawal(_amount, msg.sender, _tokenAddress);
 	}
 
+    /**
+     * @notice Allows a campaign creator to withdraw a specific amount of Ether from a specific campaign
+     * @param _amount The amount of Ether to withdraw
+     * @param _campaignId The address of the campaign
+     */
     function creatorEthWithdrawal(	uint256 _amount, address _campaignId) external {
         _creatorWithdrawal(_amount, _campaignId, address(0));
 		emit CreatorWithdrawal(_campaignId, _amount, msg.sender, address(0));
     }
     
+
+    /**
+     * @notice Allows a campaign creator to withdraw a specific amount of tokens from a specific campaign.
+     * @param _amount The amount of tokens to withdraw
+     * @param _campaignId The address of the campaign
+     * @param _tokenAddress The address of the token
+     */
     function creatorTokenWithdrawal(	uint256 _amount, address _campaignId, address _tokenAddress) external onlySufficientTokenBalance(_amount, _tokenAddress) {
         _creatorWithdrawal(_amount, _campaignId, _tokenAddress);
 		emit CreatorWithdrawal(_campaignId, _amount, msg.sender, _tokenAddress);
     }
 
+  	/**
+     * @notice Allows an affiliate for a specific campaign to withdraw all accumulated Ethereum.
+     * @dev This function allows an affiliate to call and withdraw their Ethereum per campaign.
+     * @param _campaignId The address of the campaign.
+     */
     function affiliateEthWithdrawal(address _campaignId) external {
        uint256 amount = _affiliateWithdrawal( _campaignId, address(0));
 		emit AffiliateWithdrawal(_campaignId, amount, msg.sender, address(0));
 
     }
 
+    /**
+     * @notice Allows an affiliate for a specific campaign to withdraw all accumulated token.
+     * @dev This function allows an affiliate to call and withdraw their token per campaign.
+     * @param _campaignId The address of the campaign.
+     * @param _tokenAddress The address of the token
+     */
     function affiliateTokenWithdrawal(address _campaignId, address _tokenAddress) external {
        uint256 amount =  _affiliateWithdrawal(_campaignId, _tokenAddress);
 		emit AffiliateWithdrawal(_campaignId, amount, msg.sender, _tokenAddress);
     }
 
+	/**
+     * @notice Calculate the withdrawal fee for a given amount.
+     * @param _amount The amount to calculate the withdrawal fee upon.
+     * @return withdrawalFee The calculated withdrawal fee.
+     */
 	function _calculateWithdrawalFee(
 		uint256 _amount
 	) internal view returns (uint256 withdrawalFee) {
@@ -130,6 +215,12 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		withdrawalFee = (_amount * FEE_PERCENTAGE) / 100;
 	}
 
+    /**
+     * @notice Method for the owner of a campaign to withdraw their balance.
+     * @param _amount The amount the creator wishes to withdraw.
+     * @param _campaignId The ID of the campaign the creator is withdrawing from.
+     * @param _tokenAddress The address of the token.
+     */
 	function _creatorWithdrawal(
 		uint256 _amount,
 		address _campaignId,
@@ -170,6 +261,13 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		_updateWithdrawalFeeBalance(withdrawalFee, true, _tokenAddress);
 	}
 
+    /**
+     * @notice Method for an affiliate to withdraw their earned funds.
+     * @dev This method is only callable by the affiliate.
+     * @param _campaignId The ID of the campaign.
+     * @param _tokenAddress The address of the token.
+     * @return withdrawalAmount The amount of tokens withdrawn by the affiliate.
+     */
 	function _affiliateWithdrawal(
 		address _campaignId,
         address _tokenAddress
@@ -243,6 +341,12 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		return amountAfterFees;
 	}
 
+    /**
+     * @notice Update the withdrawal fee balance.
+     * @param _amount The amount to update the balance with.
+     * @param isDeposit Whether the action is a deposit or not.
+     * @param _tokenAddress The address of the token.
+     */
 	function _updateWithdrawalFeeBalance(
 		uint256 _amount,
 		bool isDeposit, 
@@ -257,6 +361,13 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
         }
 	}
 
+  	/**
+     * @notice Deduct a specified amount from the balance.
+     * @param _campaignId The ID of the campaign.
+     * @param _withdrawalAmount The amount to withdraw.
+     * @param _isAffiliate Whether the caller is an affiliate or not.
+     * @param _tokenAddress The address of the token.
+     */
 	function _deductBalance(
 		address _campaignId,
 		uint256 _withdrawalAmount,
@@ -278,6 +389,13 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		isTokenWithdrawal ?  campaignStorage.commissionTokenBalance[_campaignId][_tokenAddress]  -= _withdrawalAmount :	campaignStorage.commissionEtherBalance[_campaignId] -= _withdrawalAmount;
 	}
 
+ 	/**
+     * @notice Mark the given list of tokens as cashed out.
+     * @param _affiliateId The ID of the affiliate.
+     * @param _campaignId The ID of the campaign.
+     * @param _directSalesTokenIds The IDs of the tokens sold directly.
+     * @param _refereesSalesTokenIds The IDs of the tokens sold via referees.
+     */
 	function _markAsCashedOutTokens(
 		address _affiliateId,
 		address _campaignId,
@@ -300,11 +418,21 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 		}
 	}
 
+  	/**
+     * @notice Tranfer a specified amount of Ether to a specified address.
+     * @param _to The address to send the Ether to.
+     * @param _amount The amount of Ether to send.
+     */
     function _transferEth(address payable _to, uint256 _amount)private {
         (bool sent, ) = _to.call{ value: _amount }("");
 		require(sent, "Failed to send Ether");
     }
 
+ 	/**
+     * @notice Transfer a specified amount of a specified token to a specified address.
+     * @param _tokenAddress The address of the token.
+     * @param _amount The amount of the token to send.
+     */
     function _transferToken(address _tokenAddress, uint256 _amount) private {
        bool sent = IERC20(_tokenAddress).transfer(msg.sender, _amount);
 	   require(sent, "Failed to send Token");

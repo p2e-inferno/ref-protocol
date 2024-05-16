@@ -10,26 +10,48 @@ import "../interfaces/ICampaignFacet.sol";
  * *******************************************************
  */
 contract CampaignHook {
+     /**
+     * @dev A unique identifier for a campaign. It is set to the address of the contract.
+     */
     address campaignId = address(this);
+    /**
+     * @dev UNADUS contract address, which is immutable.
+     */
     address immutable public UNADUS;
-    address public nftAddressForCampaign;    
-
+    /**
+     * @dev The address of the NFT contract that is being used for the campaign.
+     */
+    address public nftAddressForCampaign; 
+    /**
+     * @dev Initializes the UNADUS and lock addresses for the contract.
+     * @param _UNADUS The address of UNADUS contract.
+     * @param _lockAddress The address of the lock.
+     */
     constructor(address _UNADUS, address _lockAddress) { 
         nftAddressForCampaign = _lockAddress;
         UNADUS = _UNADUS;
     }
 
+     /**
+     * @dev Retrieves the referral fees of a lock for a given referrer.
+     * @param _referrer The address of the referrer.
+     * @return referrerFees The fees paid to the referrer.
+     */
     function getReferrerFee(address _referrer)view public returns (uint256 referrerFees){
         return referrerFees = IPublicLockV12(nftAddressForCampaign).referrerFees(_referrer);
     }
 
+     /**
+     * @dev Retrieves the campaign ID.
+     * @return Address of the campaign.
+     */
     function getCampaignId() external view returns (address) {
         return campaignId;
     }
 
     /**
-     * Price is the same for everyone... 
-     * but we fail if signer of data does not match the lock's password.
+     * @dev Calculate the price of a key purchase for a lock.
+     * @return minKeyPrice The minimum price for a key.
      */
     function keyPurchasePrice(
         address, /* from */
@@ -40,8 +62,13 @@ contract CampaignHook {
         minKeyPrice = IPublicLockV12(msg.sender).keyPrice();
     }
 
-    /**
-     * No-op but required for the hook to work
+     /**
+     * @dev Executes whenever there is a key purchase for a lock.
+     * @param _tokenId The ID of the token.
+     * @param _recipient The address of the recipient.
+     * @param _referrer The address of the referrer.
+     * @param _data The data to be passed along with the key purchase.
+     * @param _keyPrice The price of the key.
      */
     function onKeyPurchase(
         uint256 _tokenId, /* tokenId */

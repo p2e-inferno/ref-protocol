@@ -15,12 +15,12 @@ import "../libraries/Utilities.sol";
 import "../libraries/Modifiers.sol";
 
 // TODOs
-
-// * allows new affiliate sign up
-/// @title CampaignFacet
-/// @author Danny Thomx
-/// @notice Purpose: Create and Manage referral Campaigns for locks
-
+/**
+ * @title CampaignFacet
+ * @dev Create and manage referral campaigns for locks
+ * @author Danny Thomx
+ * @notice This contract module allows the creation and operation of referral campaigns for lock contracts. 
+ */
 contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 
 	event NewCampaign(
@@ -36,6 +36,11 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		uint256 tokenId
 	);
 
+	    /**
+     * @dev Get campaign data for a specific lock
+     * @param _lockAddress The address of the lock
+     * @return campaignInfo The campaign details
+     */
 	function getCampaignForLock(
 		address _lockAddress
 	) external view returns (CampaignInfo memory) {
@@ -48,6 +53,12 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		return campaignStorage.campaignsById[campaignId];
 	}
 
+    /**
+     * @dev Get campaign commission balance
+     * @param _campaignId The ID of the campaign
+     * @param _tokenAddress The address of the token
+     * @return balance The balance of commissions
+     */
 	function getCampaignCommissionBalance(
 		address _campaignId,
 		address _tokenAddress
@@ -58,11 +69,22 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 			: campaignStorage.commissionEtherBalance[_campaignId];
 	}
 
+  	/**
+     * @dev Get withdrawal delay for a specific campaign
+     * @param _campaignId The address of the campaign
+     * @return delayInDays The delay in days for withdrawal
+     */
 	function getWithdrawalDelayForCampaign(address _campaignId) external view returns (uint256 delayInDays) {
 		CampaignStorage storage campaignStorage = LibCampaignStorage.diamondStorage();
 		delayInDays = campaignStorage.withdrawalDelay[_campaignId];
 	}
 
+	  /**
+     * @dev Get non-commission balance for a specific campaign
+     * @param _campaignId The address of the campaign
+     * @param _tokenAddress The address of the token
+     * @return balance The non-commission balance
+     */
 	function getCampaignNonCommissionBalance(
 		address _campaignId,
 		address _tokenAddress
@@ -73,6 +95,11 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 			: campaignStorage.nonCommissionEtherBalance[_campaignId];
 	}
 
+   /**
+     * @dev Check if a campaign exists
+     * @param _campaignId The address of the campaign
+     * @return isCampaign The boolean response if campaign exists
+     */
 	function getIsCampaign(
 		address _campaignId
 	) external view returns (bool isCampaign) {
@@ -80,16 +107,34 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		isCampaign = campaignStorage.isCampaign[_campaignId];
 	}
 
+	  /**
+     * @dev Get campaign data by ID
+     * @param _campaignId The address of the campaign
+     * @return campaignInfo The campaign details
+     */
 	function getCampaignById(
 		address _campaignId
 	) public view returns (CampaignInfo memory) {
 		return CampaignHelpers._getCampaignData(_campaignId);
 	}
 
+	  /**
+     * @dev Get the maximum tiers of campaigns
+     * @return The max number of tiers
+     */
 	function getMaxTiers() external pure returns (uint) {
 		return AppConstants.MAX_TIERS;
 	}
 
+	 /**
+     * @dev Create a new campaign
+     * @param _name The name of the campaign
+     * @param _lockAddress The address of the lock
+     * @param _level1Commission The level 1 commission
+     * @param _level2Commission The level 2 commission
+     * @param _level3Commission The level 3 commission
+     * @param _delay The withdrawal delay
+     */
 	function createCampaign(
 		string memory _name,
 		address _lockAddress,
@@ -157,7 +202,12 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 			tiersCommission
 		);
 	}
-
+	
+	/**
+     * @dev Change the name of a specific campaign
+     * @param _newName The new name
+     * @param _campaignId The address of the campaign
+     */
 	function setName(
 		string memory _newName,
 		address _campaignId
@@ -168,6 +218,11 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		CampaignHelpers._updateCampaignStorage(_campaign);
 	}
 
+	/**
+     * @dev Set withdrawal delay for a specific campaign
+     * @param _delayInDays The delay in days
+     * @param _campaignId The address of the campaign
+     */
 	function setWithdrawalDelayForCampaign(
 		uint256 _delayInDays,
 		address _campaignId
@@ -177,7 +232,14 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		CampaignHelpers._updateCampaignStorage(_campaign);
 	}
 
-	// commission is expressed in basis points (ie 100% is 10000, 10% is 1000, 1% is 100)
+	/**
+     * @dev Set tiers commission
+	 * @notice commission is expressed in basis points (ie 100% is 10000, 10% is 1000, 1% is 100)
+     * @param _campaignId The address of the campaign
+     * @param _level1Commission The level 1 commission
+     * @param _level2Commission The level 2 commission
+     * @param _level3Commission The level 3 commission
+     */
 	function setTiersCommission(
 		address _campaignId,
 		uint256 _level1Commission,
@@ -195,6 +257,12 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		CampaignHelpers._updateCampaignStorage(_campaign);
 	}
 
+
+    /**
+     * @dev Process referred purchase
+     * @param _purchaseData The data of the purchase
+     * @return Boolean response of the operation
+     */
 	function onReferredPurchase(
 		ReferredPurchaseData memory _purchaseData
 	) external onlyCampaign returns (bool) {
@@ -249,6 +317,13 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		return true;
 	}
 
+	/**
+     * @dev Process non-referred purchase
+     * @param _campaignId The address of the campaign
+     * @param _commission The commission amount
+     * @param _tokenAddress The address of the token
+     * @return Boolean response of the operation
+     */
 	function onNonReferredPurchase(
 		address _campaignId,
 		uint256 _commission,
@@ -261,6 +336,10 @@ contract CampaignFacet is Modifiers, ICampaignFacet, ReentrancyGuard {
 		return true;
 	}
 
+	/**
+	 * @dev Add a new referee
+	 * @param _purchaseData The data of the purchase
+	 */
 	function _addNewReferee(ReferredPurchaseData memory _purchaseData) private {
 		// emit new referee event
 		emit NewReferee(_purchaseData.campaignId, _purchaseData.recipient, _purchaseData.affiliateAddress, _purchaseData.tokenId);

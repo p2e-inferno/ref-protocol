@@ -6,19 +6,30 @@ import "../libraries/storage/LibAffiliateStorage.sol";
 import "../libraries/storage/LibCampaignStorage.sol";
 import "../libraries/storage/LibAppStorage.sol";
 
-// @title UNADUS
-/// @author Dannt Thomx
-/// @notice
-/// @dev
+/**
+ * @title AffiliateFacet
+ * @dev Handles functionalities related to campaign affiliates.
+ */
 contract AffiliateFacet {
 	mapping(address => mapping(address => bool)) isCampaignAffiliate;
 	event NewAffiliate(address indexed affiliate, address campaignId);
 
+	/**
+	 * @dev Get a list of all affiliates associated with a campaign.
+	 * @param _campaignId The campaign to fetch the affiliates.
+	 * @return campaignAffiliates List of all affiliates.
+	 */
 	function getCampaingAffiliates(address _campaignId) external view returns (address[] memory campaignAffiliates) {
 		AffiliateStorage storage affiliateStorage = LibAffiliateStorage.diamondStorage();
 		campaignAffiliates = affiliateStorage.affiliatesOf[_campaignId];
 	}
 
+	/**
+	 * @dev Get a list of all referees associated with an affiliate for a specific campaign.
+	 * @param _affiliate The affiliate to fetch the referees.
+	 * @param _campaignId The campaign to fetch the referees.
+	 * @return List of all referees.
+	 */
 	function getRefereesOf(
 		address _affiliate,
 		address _campaignId
@@ -28,11 +39,22 @@ contract AffiliateFacet {
 		return _storage.refereesOf[_affiliate][_campaignId];
 	}
 
+	/**
+   * @dev Get count of affiliates associated with a campaign.
+   * @param _campaignId The campaign to fetch the affiliate count.
+   * @return count Number of affiliates.
+   */
 	function getCampaignAffiliatesCount(address _campaignId)external view returns(uint256 count) {
 	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
 	    count =  _storage.affiliatesOf[_campaignId].length;
 	}
 
+/**
+   * @dev Get status of an affiliate association with a campaign.
+   * @param _affiliate The affiliate to fetch the status.
+   * @param _campaignId The campaign to fetch the status.
+   * @return Boolean indicating if the account is an affiliate of the campaign.
+   */
 	function getIsCampaignAffiliate(
 		address _affiliate,
 		address _campaignId
@@ -40,36 +62,79 @@ contract AffiliateFacet {
 		return isCampaignAffiliate[_affiliate][_campaignId];
 	}
 
+ /**
+   * @dev Get affiliate referrer associated with a campaign.
+   * @param _affiliateId The affiliate to fetch the referrer.
+   * @param _campaignId The campaign to fetch the referrer.
+   * @return referrer The referrer of the affiliate for the campaign.
+   */
 	function getAffiliateReferrer(address _affiliateId, address _campaignId) external view returns(address referrer) {
 	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
         referrer = _storage.affiliateData[_affiliateId][_campaignId].referrer;
 	}
 
+	  /**
+   * @dev Get affiliate ether balance for a campaign.
+   * @param _affiliateId The affiliate to fetch the balance.
+   * @param _campaignId The campaign to fetch the balance.
+   * @return balance Ether balance of the affiliate for the campaign.
+   */
 	function getAffiliateEthBalanceForCampaign(address _affiliateId, address _campaignId)view external returns (uint256 balance) {
 	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
 		balance = _storage.affiliateBalance[_affiliateId].etherBalance[_campaignId];
 	}
-
+   
+   /**
+   * @dev Get affiliate token balance for a campaign.
+   * @param _affiliateId The affiliate to fetch the balance.
+   * @param _campaignId The campaign to fetch the balance.
+   * @param _tokenAddress Ethereum address of the token.
+   * @return balance Token balance of the affiliate for the campaign.
+   */
 	function getAffiliateTokenBalanceForCampaign(address _affiliateId, address _campaignId, address _tokenAddress) view external returns (uint256 balance) {
 	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
  		balance = _storage.affiliateBalance[_affiliateId].tokenBalance[_campaignId][_tokenAddress];
 	}
 
+	/**
+	 * @dev Get an array of ids of tokens sold by an affiliate in a campaign.
+	 * @param _affiliateId Ethereum address of the affiliate.
+	 * @param _campaignId Ethereum address of the campaign.
+	 * @return soldTokens list by the affiliate.
+	 */
 	function getAffiliateSoldTokens(address _affiliateId, address _campaignId) external view returns(uint256[] memory soldTokens) {
 	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
         soldTokens = _storage.affiliateData[_affiliateId][_campaignId].soldTokens;
 	}
 
+	/**
+	 * @dev Get an array of ids of tokens sold by the downline of an affiliate in a campaign.
+	 * @param _affiliateId Ethereum address of the affiliate.
+	 * @param _campaignId Ethereum address of the campaign.
+	 * @return soldTokens list by the affiliate's downlines.
+	 */
 	function getAffiliateDownlineSoldTokens(address _affiliateId, address _campaignId) external view returns(uint256[] memory soldTokens) {
 	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
         soldTokens = _storage.affiliateData[_affiliateId][_campaignId].refereesSoldTokens;
 	}
 
+	/**
+	 * @dev Get information about a sale made by an affiliate in a campaign
+	 * @param _affiliateId Ethereum address of the affiliate.
+	 * @param _campaignId Ethereum address of the campaign.
+	 * @param _tokenId Token ID for which the sale data is needed.
+	 * @return saleInfo Sale information for given tokenId.
+	 */
 	function getAffiliateSaleData(address _affiliateId, address _campaignId, uint256 _tokenId) external view returns(SaleInfo memory saleInfo) {
 	    AffiliateStorage storage _storage = LibAffiliateStorage.diamondStorage();
         saleInfo = _storage.affiliateData[_affiliateId][_campaignId].saleData[_tokenId];
 	}
 
+	/**
+	 * @dev A user becomes an affiliate of a campaign. If a referrer is provided, affiliate is linked to the referrer.
+	 * @param _referrer Ethereum address of the referrer. This is optional.
+	 * @param _campaignId Ethereum address of the campaign.
+	*/
 	function becomeAffiliate(address _referrer, address _campaignId) external {
 		CampaignStorage storage _storage = LibCampaignStorage.diamondStorage();
 		address campaignId = _storage.campaignsById[_campaignId].campaignId;
@@ -94,6 +159,12 @@ contract AffiliateFacet {
 		emit NewAffiliate(msg.sender, _campaignId);
 	}
 
+	/**
+	 * @dev Add a new affiliate to a campaign and update the referrer's list of referees and the list of all affiliates.
+	 * @param _campaignId Ethereum address of the campaign.
+	 * @param _affiliateId Ethereum address of the new affiliate.
+	 * @param _referrer Ethereum address of the referrer. This is optional.
+	*/
 	function _addNewAffiliate(
         address _campaignId,
         address _affiliateId,
@@ -121,6 +192,12 @@ contract AffiliateFacet {
 		}
 	}
 
+	/**
+	 * @dev Mark an account as being an affiliate for a campaign.
+	 * @param _account Ethereum address of the account.
+	 * @param _campaignId Ethereum address of the campaign.
+	 * @param _isAffiliate Affiliate status. If set to true, account will be set as an affiliate for given campaign.
+	*/
 	function _setIsAffiliate(
 		address _account,
 		address _campaignId,
