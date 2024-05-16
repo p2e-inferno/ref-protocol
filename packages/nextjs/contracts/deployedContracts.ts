@@ -4289,7 +4289,7 @@ const deployedContracts = {
       },
     },
     RefereeFacet: {
-      address: "0xF8aE6c1F45EEC089576Fc644427Ff55CB81fFaA1",
+      address: "0x09F5b8560D71E516a2d31550826531767E5FC369",
       abi: [
         {
           inputs: [

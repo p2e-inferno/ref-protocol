@@ -1,13 +1,35 @@
-# 🏗 Scaffold-ETH 2
+# Ref Protocol - Decentralized Affiliate Marketing
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+## Description
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+Ref Protocol is a decentralized affiliate marketing platform built on the Ethereum blockchain. This DApp enables users to create unique campaigns and allows affiliates to earn through these campaigns.
 
-⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, and Typescript.
+This DApp is centered around providing flexibility to campaign creators and affiliates. Creators can set up their campaigns complete with commission rates while affiliates can join these campaigns to generate earnings.  
+
+Affiliates have the option to directly drive sales or expand their network by recruiting additional affiliates. All the earnings within the platform can be withdrawn via the 'WithdrawalFacet' part of the DApp.
+
+## Getting Started
+
+### For Creators:
+
+- Define a unique campaign including crucial details such as commission rate and campaign rules.
+- Deploy your campaign by calling the `createCampaign()` function.
+- The `onKeyPurchase()` function enables tracking of all purchases made within your campaign.
+- Your campaign is now live and accessible for affiliates to join. 
+
+### For Affiliates:
+
+- Scan through the live campaigns and join the desired one.
+- Call the `becomeAffiliate()` function with required parameters (reffererAddress, campaignId).
+- After successful execution, share the referral links to start earning commissions on purchases via your link.
+- Once you've generated commissions, leverage the `WithdrawalFacet` to conveniently withdraw your earnings.
+
+The Ref Protocol platform is a great way to step into the world of decentralized Universal Basic Income (UBI) systems.
+
+For entreprenuers, creators, event organizers, community builders, and the crypto dreamers. 
+
+## ⚙️ Built using 🏗 Scaffold-ETH 2
+
 
 - ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
 - 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
@@ -32,8 +54,8 @@ To get started with Scaffold-ETH 2, follow the steps below:
 1. Clone this repo & install dependencies
 
 ```
-git clone https://github.com/scaffold-eth/scaffold-eth-2.git
-cd scaffold-eth-2
+git clone https://github.com/blahkheart/ref-protocol
+cd ref-protocol
 yarn install
 ```
 
