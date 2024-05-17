@@ -14,7 +14,7 @@ Affiliates have the option to directly drive sales or expand their network by re
 
 - Define a unique campaign including crucial details such as commission rate and campaign rules.
 - Deploy your campaign by calling the `createCampaign()` function.
-- The `onKeyPurchase()` function enables tracking of all purchases made within your campaign.
+- The `onKeyPurchase()` hook enables tracking of all purchases made within your campaign. [see unlock docs](https://docs.unlock-protocol.com/core-protocol/public-lock/hooks/#onkeypurchase-hook)
 - Your campaign is now live and accessible for affiliates to join. 
 
 ### For Affiliates:
