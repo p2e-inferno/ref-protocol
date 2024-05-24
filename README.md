@@ -28,6 +28,47 @@ The Ref Protocol platform is a great way to step into the world of decentralized
 
 For entreprenuers, creators, event organizers, community builders, and the crypto dreamers. 
 
+## Quickstart
+
+To get started follow the steps below:
+
+1. Clone this repo & install dependencies
+
+```
+git clone https://github.com/p2e-inferno/ref-protocol.git
+cd ref-protocol
+yarn install
+```
+
+2. Run a local network in the first terminal:
+
+```
+yarn chain
+```
+
+Starts a local Ethereum network using Hardhat.
+**Note:** Unlock Protocol smart contracts are not deployed to the local network and therefore the Dapp should be deployed to a supported testnet such as Sepolia for proper functionality of features interacting with Unlock Protocol. 
+
+3. On a second terminal, deploy smart contracts:
+
+```
+yarn deploy
+```
+    Or
+```
+yarn deploy --network sepolia
+```
+
+The first command deploys the smart contracts to the local network while the second deploys the contracts to the specified network. The contracts are located in `packages/hardhat/contracts`. Deployment scripts located in `packages/hardhat/deploy`.
+
+4. On a third terminal, start your NextJS app:
+
+```
+yarn start
+```
+
+Visit your app on: `http://localhost:3000`. You can interact with the smart contracts using the `Debug Diamonds` page by visiting `http://localhost:3000/debug-diamond`.
+
 ## ⚙️ Built using 🏗 Scaffold-ETH 2
 
 
