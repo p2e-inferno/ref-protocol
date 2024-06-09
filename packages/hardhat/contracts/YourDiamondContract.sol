@@ -28,6 +28,12 @@ struct DiamondArgs {
 }
 
 contract YourDiamondContract {
+	// Event for random Ether received
+    event YoloEtherReceived(address indexed sender, uint256 amount);
+    // Event for random Ether withdrawal
+    event YoloEtherWithdrawn(address indexed to, uint256 amount);
+	// Variable to track random Ether received
+	uint256 yoloEthBalance = 0;
 	constructor(
 		IDiamondCut.FacetCut[] memory _diamondCut,
 		DiamondArgs memory _args
@@ -73,7 +79,14 @@ contract YourDiamondContract {
 		}
 	}
 
-	receive() external payable {}
+	receive() external payable {
+		if(msg.value > 0) {
+			// Track the random Ether
+			uint256 amount = msg.value;
+			yoloEthBalance += amount;
+			emit YoloEtherReceived(msg.sender, amount);
+		}
+	}
 
 	function initializeUnadus() external {
 		require(IERC173(address(this)).owner() == msg.sender, "Not Owner");
@@ -85,4 +98,23 @@ contract YourDiamondContract {
 		AppStorage storage appStorage = LibAppStorage.diamondStorage();
 		unadus = appStorage.unadusAddress;
 	}
+
+  	/**
+     * @notice Withdraw random Ether sent to the contract
+     * @dev Withdraws all the random Ether without affecting the deposited Ether.
+     * @param _to The address to which the Ether should be sent.
+     */
+	function withdrawYoloEth(address payable _to) external {
+		require(IERC173(address(this)).owner() == msg.sender, "Not Owner");
+        require(yoloEthBalance > 0, "No yolo ETH available");
+
+        uint256 amount = yoloEthBalance;
+        yoloEthBalance = 0;
+
+        (bool success, ) = _to.call{value: amount}("");
+        require(success, "Transfer failed");
+
+        emit YoloEtherWithdrawn(_to, amount);
+    }
+
 }

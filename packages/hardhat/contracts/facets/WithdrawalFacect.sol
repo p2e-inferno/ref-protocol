@@ -39,11 +39,11 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 	);
 
 	/**
-     * @notice Get the fee charged when there is a withdrawal.
-     * @dev View function that is used to get the percentage fee levied on withdrawals.
-     * @return fee The percentage fee to be levied. 
+     * @notice Get the fee charged when there is a non member withdrawal.
+     * @dev View function that is used to get the fee charge on non member withdrawals in basis points.
+     * @return fee in basis points. 
      */
-	function getPercentageWithdrawalFee() public view returns (uint256 fee) {
+	function getWithdrawalFeeBasisPoints() public view returns (uint256 fee) {
 		AppStorage storage appStorage = LibAppStorage.diamondStorage();
 		return fee = appStorage.withdrawalFee;
 	}
@@ -116,13 +116,13 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 	/**
      * @notice Set the percentage fee charged on withdrawals
      * @dev Only the contract owner can call this function
-     * @param _feePercentage The percentage fee to be set, provided as an integer. For example, for a 1% fee, provide 100 to represent 1.00%
+     * @param _feeBasisPoints The fee to be set, provided in basis points. For example, 100 for a 1% fee.
      */
-	function setPercentageWithdrawalFee(
-		uint256 _feePercentage
+	function setWithdrawalFee(
+		uint256 _feeBasisPoints
 	) external onlyOwner {
 		AppStorage storage appStorage = LibAppStorage.diamondStorage();
-		appStorage.withdrawalFee = _feePercentage;
+		appStorage.withdrawalFee = _feeBasisPoints;
 	}
 
  	/**
@@ -211,8 +211,8 @@ contract WithdrawalFacet is Modifiers, ReentrancyGuard {
 	function _calculateWithdrawalFee(
 		uint256 _amount
 	) internal view returns (uint256 withdrawalFee) {
-		uint256 FEE_PERCENTAGE = getPercentageWithdrawalFee();
-		withdrawalFee = (_amount * FEE_PERCENTAGE) / 100;
+		uint256 FEE_BASIS_POINTS = getWithdrawalFeeBasisPoints();
+		withdrawalFee = (_amount * FEE_BASIS_POINTS) / 10000;
 	}
 
     /**
