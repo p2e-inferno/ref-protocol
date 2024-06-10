@@ -88,8 +88,7 @@ contract CampaignHook {
     ) external {
         // calculate referrer commission for the lock
         uint256 commission = _calculateCampaignCommission(_referrer, _keyPrice);
-        uint256 dataLength = _data.length;
-        if(dataLength > 0 && dataLength != ADDRESS_BYTES_LENGTH) revert InvalidAddress();
+        if(_data.length > 0 && _data.length != ADDRESS_BYTES_LENGTH) revert InvalidAddress();
         // decode affiliate's address from calldata
         address _affiliateAddress = _data.length == 0 ? address(0) : abi.decode(_data, (address));
 
