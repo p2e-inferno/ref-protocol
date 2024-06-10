@@ -4,12 +4,19 @@ pragma solidity >=0.8.2 <0.9.0;
 import "@unlock-protocol/contracts/dist/PublicLock/IPublicLockV12.sol";
 import "../interfaces/ICampaignFacet.sol";
 
+error InvalidAddress();
+
 /******************************************************
  * Purpose
  * deploy onKeyPurchase hook to track referrals for a lock
  * *******************************************************
  */
 contract CampaignHook {
+     /**
+     * @dev The length of an Ethereum address
+     */
+    uint256 constant ADDRESS_BYTES_LENGTH = 20;
+
      /**
      * @dev A unique identifier for a campaign. It is set to the address of the contract.
      */
@@ -81,8 +88,9 @@ contract CampaignHook {
     ) external {
         // calculate referrer commission for the lock
         uint256 commission = _calculateCampaignCommission(_referrer, _keyPrice);
+        uint256 dataLength = _data.length;
+        if(dataLength > 0 && dataLength != ADDRESS_BYTES_LENGTH) revert InvalidAddress();
         // decode affiliate's address from calldata
-       
         address _affiliateAddress = _data.length == 0 ? address(0) : abi.decode(_data, (address));
 
         // Determine if this was a referred or non-referred purchase
